@@ -1,6 +1,16 @@
 databaseChangeLog:
 
 - changeSet:
+    id: 16-0
+    author: Luke Loze
+    changes:
+    - sqlFile:
+        comment: Drop pgcrypto extension, so it can be recreated correctly - bug fix, whole area to be removed soon
+        path: drop-pgcrpto.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+
+- changeSet:
     id: 16-1
     author: Adam Hawtin, Liam Toozer
     changes:

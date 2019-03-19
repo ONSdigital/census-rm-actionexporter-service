@@ -1,4 +1,5 @@
 -- Create postgres extension to allow generation of v4 UUID
+
 CREATE EXTENSION IF NOT EXISTS "pgcrypto" SCHEMA "public";
 
 -- Add new columns for new unique address keys and foreign keys (unique and not null to ensure it meets PK criteria)

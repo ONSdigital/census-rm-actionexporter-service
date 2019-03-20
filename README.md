@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/ONSdigital/rm-actionexporter-service.svg?branch=master)](https://travis-ci.org/ONSdigital/rm-actionexporter-service)
 [![codecov](https://codecov.io/gh/ONSdigital/rm-actionexporter-service/branch/master/graph/badge.svg)](https://codecov.io/gh/ONSdigital/rm-actionexporter-service)
 
-# Action Exporter Service
+# Census RM Action Exporter Service
 This repository contains the Action Exporter service. This microservice is a RESTful web service implemented using [Spring Boot](http://projects.spring.io/spring-boot/).
 
 ## API

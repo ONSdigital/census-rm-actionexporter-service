@@ -8,7 +8,7 @@ jdk: openjdk8
 
 env:
   global:
-    - SOURCE_IMAGE_NAME="actionexportersvc"
+    - SOURCE_IMAGE_NAME="census-rm-actionexportersvc"
     - DESTINATION_IMAGE_NAME="$DOCKER_GCP_LOCATION/census-rm-actionexportersvc"
 
 before_install:

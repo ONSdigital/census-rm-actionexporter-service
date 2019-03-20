@@ -5,8 +5,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>CTP : ActionExporterService</name>
-    <description>CTP : ActionExporterService</description>
+    <name>CTP : CensusRMActionExporterService</name>
+    <description>CTP : CensusRMActionExporterService</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,7 +24,7 @@
         <developerConnection>scm:git:https://github.com/ONSdigital/census-rm-actionexporter-service
         </developerConnection>
         <url>https://github.com/ONSdigital/census-rm-actionexporter-service</url>
-        <tag>census-rm-actionexportersvc-10.49.10</tag>
+        <tag>census-rm-actionexportersvc-0.0.1</tag>
     </scm>
 
     <profiles>

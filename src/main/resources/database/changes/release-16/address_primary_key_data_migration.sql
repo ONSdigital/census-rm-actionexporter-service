@@ -4,3 +4,4 @@ UPDATE actionexporter.actionrequest AS ar
 SET addressFK = a.addressPK
 FROM actionexporter.address AS a
 WHERE ar.sampleunitref = a.sampleunitref;
+--WHAT IS THIS SCARY THING AND DO WE STILL NEED IT, I've never run it

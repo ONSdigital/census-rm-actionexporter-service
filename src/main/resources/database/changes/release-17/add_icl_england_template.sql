@@ -4,11 +4,11 @@ INSERT INTO actionexporter.template (templatenamepk, content, datemodified) VALU
 'ARID' ||
 '${(actionRequest.address.line1?trim)!}|' ||
 '${(actionRequest.address.line2?trim)!}|' ||
-'NOT YET IN MSG|' ||
+'ADDRESS LINE 3|' ||
 '${(actionRequest.address.townName?trim)!}|' ||
 '${(actionRequest.address.postcode?trim)!}|' ||
 '${(actionRequest.address.sampleUnitRef)!"null"}|' ||
-'ARID
+'PACK_CODE
 </#list>'
 ,
 now());

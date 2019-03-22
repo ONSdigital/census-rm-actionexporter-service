@@ -203,6 +203,53 @@ public class TemplateServiceIT {
   }
 
   @Test
+  public void testTemplateGeneratesCorrectPrintFileForEnglandNotification() throws Exception {
+    final String icl_england = "ICL1E";
+
+    // Given
+    ActionRequest actionRequest = ActionRequestBuilder.createICL_EnglandActionRequest(icl_england);
+
+    ActionInstruction actionInstruction = new ActionInstruction();
+    actionInstruction.setActionRequest(actionRequest);
+    BlockingQueue<String> queue =
+        simpleMessageListener.listen(
+            SimpleMessageBase.ExchangeType.Fanout, "event-message-outbound-exchange");
+
+    simpleMessageSender.sendMessage(
+        "action-outbound-exchange",
+        "Action.Printer.binding",
+        ActionRequestBuilder.actionInstructionToXmlString(actionInstruction));
+
+    // When
+    String message = queue.take();
+
+    // Then
+    assertThat(message, containsString(icl_england));
+    String notificationFilePath = getLatestSftpFileName();
+    InputStream inputSteam = defaultSftpSessionFactory.getSession().readRaw(notificationFilePath);
+
+    try (Reader reader = new InputStreamReader(inputSteam);
+        CSVParser parser = new CSVParser(reader, CSVFormat.newFormat(':'))) {
+
+      String notificationFile = StringUtils.substringAfterLast(notificationFilePath, "/");
+      assertEquals(icl_england, StringUtils.substringBefore(notificationFile, "_"));
+
+      Iterator<String> templateRow = parser.iterator().next().iterator();
+
+      assertEquals("\n", parser.getFirstEndOfLine());
+      assertEquals(actionRequest.getAddress().getLine1(), templateRow.next());
+      assertThat(templateRow.next(), isEmptyString()); // Line 2 should be empty
+      assertEquals(actionRequest.getAddress().getPostcode(), templateRow.next());
+      assertEquals(actionRequest.getAddress().getTownName(), templateRow.next());
+      assertEquals(actionRequest.getAddress().getLocality(), templateRow.next());
+      assertEquals(actionRequest.getSampleUnitRef(), templateRow.next());
+    } finally {
+      // Delete the file created in this test
+      assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
+    }
+  }
+
+  @Test
   public void testMostRecentAddressUsedWhenDuplicateSampleUnitRefs() throws Exception {
     // Given
     ActionInstruction firstActionInstruction =

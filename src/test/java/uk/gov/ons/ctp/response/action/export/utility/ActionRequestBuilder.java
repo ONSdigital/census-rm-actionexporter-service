@@ -15,8 +15,54 @@ import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 import uk.gov.ons.ctp.response.action.message.instruction.Priority;
 
 public class ActionRequestBuilder {
+
+  public static final String ENGLAND = "E";
+  public static final String ORG_NAME = "Castle of Frankenstein";
+  public static final String POST_CODE = "postCode";
+  public static final String POST_TOWN = "postTown";
+  public static final String LOCALITY = "locality";
+  public static final String SAMPLE_UNIT_REF = "sampleUR";
+
   public static ActionRequest createSocialActionRequest(final String actionType) {
     return createSocialActionRequest(actionType, "Prem1", "exRef");
+  }
+
+  public static ActionRequest createICL_EnglandActionRequest(final String actionType) {
+    return createICL_EnglandActionRequest(actionType, "Prem1", "exRef");
+  }
+
+  public static ActionRequest createICL_EnglandActionRequest(
+      final String actionType, String addressLine1, String exerciseRef) {
+    ActionAddress actionAddress = new ActionAddress();
+    actionAddress.setLine1(addressLine1);
+    actionAddress.setCountry(ENGLAND);
+    actionAddress.setOrganisationName(ORG_NAME);
+    actionAddress.setPostcode(POST_CODE);
+    actionAddress.setTownName(POST_TOWN);
+    actionAddress.setLocality(LOCALITY);
+
+    ActionRequest actionRequest = new ActionRequest();
+    actionRequest.setSampleUnitRef(SAMPLE_UNIT_REF);
+    actionRequest.setActionId(UUID.randomUUID().toString());
+    actionRequest.setActionPlan("actionPlan");
+    actionRequest.setActionType(actionType);
+    actionRequest.setAddress(actionAddress);
+    actionRequest.setQuestionSet("questions");
+    actionRequest.setLegalBasis("legalBasis");
+    actionRequest.setRegion("region");
+    actionRequest.setRespondentStatus("rStatus");
+    actionRequest.setEnrolmentStatus("eStatus");
+    actionRequest.setCaseGroupStatus("cgStatus");
+    actionRequest.setCaseId(UUID.randomUUID().toString());
+    actionRequest.setPriority(Priority.HIGHEST);
+    actionRequest.setCaseRef("caseRef");
+    actionRequest.setIac("test-iac");
+    actionRequest.setExerciseRef(exerciseRef);
+    actionRequest.setContact(new ActionContact());
+    actionRequest.setEvents(new ActionEvent(Collections.singletonList("event1")));
+    actionRequest.setReturnByDate(DateTimeFormatter.ofPattern("dd/MM").format(LocalDate.now()));
+
+    return actionRequest;
   }
 
   public static ActionRequest createSocialActionRequest(

@@ -15,6 +15,5 @@ public class AppConfig {
   private Rabbitmq rabbitmq;
   private ExportSchedule exportSchedule;
   private DataGrid dataGrid;
-  private SwaggerSettings swaggerSettings;
   private Logging logging;
 }

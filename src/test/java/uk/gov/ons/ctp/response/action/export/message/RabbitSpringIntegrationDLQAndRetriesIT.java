@@ -54,7 +54,7 @@ public class RabbitSpringIntegrationDLQAndRetriesIT {
 
   @Test
   public void ensureFailedActionInstructionIsRetried() throws Exception {
-    ActionRequest actionreq = ActionRequestBuilder.createSocialActionRequest("MEOWMEOW");
+    ActionRequest actionreq = ActionRequestBuilder.createICL_EnglandActionRequest("MEOWMEOW");
     actionreq.setActionId("MEOWMEOW");
     ActionInstruction actioninstr = new ActionInstruction();
     actioninstr.setActionRequest(actionreq);

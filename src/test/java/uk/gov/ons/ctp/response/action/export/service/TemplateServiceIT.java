@@ -1,24 +1,25 @@
 package uk.gov.ons.ctp.response.action.export.service;
 
 import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.isEmptyString;
 import static org.junit.Assert.assertThat;
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.jcraft.jsch.ChannelSftp;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
+import java.util.stream.Collectors;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,101 +73,11 @@ public class TemplateServiceIT {
             rabbitConfig.getPassword());
   }
 
-  //  @Test
-  //  public void testTemplateGeneratesCorrectReminderFileForSocial() throws Exception {
-  //    // Given
-  //    ActionRequest actionRequest = ActionRequestBuilder.createSocialActionRequest("SOCIALREM");
-  //
-  //    ActionInstruction actionInstruction = new ActionInstruction();
-  //    actionInstruction.setActionRequest(actionRequest);
-  //    BlockingQueue<String> queue =
-  //        simpleMessageListener.listen(
-  //            SimpleMessageBase.ExchangeType.Fanout, "event-message-outbound-exchange");
-  //
-  //    simpleMessageSender.sendMessage(
-  //        "action-outbound-exchange",
-  //        "Action.Printer.binding",
-  //        ActionRequestBuilder.actionInstructionToXmlString(actionInstruction));
-  //
-  //    // When
-  //    String message = queue.take();
-  //
-  //    // Then
-  //    assertThat(message, containsString("SOCIALREM"));
-  //    String notificationFilePath = getLatestSftpFileName();
-  //    InputStream inputSteam =
-  // defaultSftpSessionFactory.getSession().readRaw(notificationFilePath);
-  //
-  //    try (Reader reader = new InputStreamReader(inputSteam);
-  //        CSVParser parser = new CSVParser(reader, CSVFormat.newFormat(':'))) {
-  //      Iterator<String> templateRow = parser.iterator().next().iterator();
-  //      assertEquals("\n", parser.getFirstEndOfLine());
-  //      assertEquals(actionRequest.getAddress().getLine1(), templateRow.next());
-  //      assertThat(templateRow.next(), isEmptyString()); // Address line 2 should be empty
-  //      assertEquals(actionRequest.getAddress().getPostcode(), templateRow.next());
-  //      assertEquals(actionRequest.getAddress().getTownName(), templateRow.next());
-  //      assertEquals(actionRequest.getAddress().getLocality(), templateRow.next());
-  //      assertEquals(actionRequest.getAddress().getCountry(), templateRow.next());
-  //      assertEquals(actionRequest.getIac(), templateRow.next());
-  //      assertEquals(actionRequest.getAddress().getOrganisationName(), templateRow.next());
-  //      assertEquals(actionRequest.getSampleUnitRef(), templateRow.next());
-  //      assertEquals(actionRequest.getReturnByDate(), templateRow.next());
-  //    } finally {
-  //      // Delete the file created in this test
-  //      assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
-  //    }
-  //  }
-
-  //  @Test
-  //  public void testTemplateGeneratesCorrectPrintFileForSocial() throws Exception {
-  //    // Given
-  //    ActionRequest actionRequest = ActionRequestBuilder.createSocialActionRequest("SOCIALNOT");
-  //
-  //    ActionInstruction actionInstruction = new ActionInstruction();
-  //    actionInstruction.setActionRequest(actionRequest);
-  //    BlockingQueue<String> queue =
-  //        simpleMessageListener.listen(
-  //            SimpleMessageBase.ExchangeType.Fanout, "event-message-outbound-exchange");
-  //
-  //    simpleMessageSender.sendMessage(
-  //        "action-outbound-exchange",
-  //        "Action.Printer.binding",
-  //        ActionRequestBuilder.actionInstructionToXmlString(actionInstruction));
-  //
-  //    // When
-  //    String message = queue.take();
-  //
-  //    // Then
-  //    assertThat(message, containsString("SOCIALNOT"));
-  //    String notificationFilePath = getLatestSftpFileName();
-  //    InputStream inputSteam =
-  // defaultSftpSessionFactory.getSession().readRaw(notificationFilePath);
-  //
-  //    try (Reader reader = new InputStreamReader(inputSteam);
-  //        CSVParser parser = new CSVParser(reader, CSVFormat.newFormat(':'))) {
-  //      Iterator<String> templateRow = parser.iterator().next().iterator();
-  //      assertEquals("\n", parser.getFirstEndOfLine());
-  //      assertEquals(actionRequest.getAddress().getLine1(), templateRow.next());
-  //      assertThat(templateRow.next(), isEmptyString()); // Address line 2 should be empty
-  //      assertEquals(actionRequest.getAddress().getPostcode(), templateRow.next());
-  //      assertEquals(actionRequest.getAddress().getTownName(), templateRow.next());
-  //      assertEquals(actionRequest.getAddress().getLocality(), templateRow.next());
-  //      assertEquals(actionRequest.getAddress().getCountry(), templateRow.next());
-  //      assertEquals(actionRequest.getIac(), templateRow.next());
-  //      assertEquals(actionRequest.getSampleUnitRef(), templateRow.next());
-  //      assertEquals(actionRequest.getReturnByDate(), templateRow.next());
-  //    } finally {
-  //      // Delete the file created in this test
-  //      assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
-  //    }
-  //  }
-
   @Test
   public void testTemplateGeneratesCorrectPrintFileForCensusICL() throws Exception {
     final String CensusICL = "CENSUS_ICL";
 
     // Given
-    //    ActionRequest actionRequest = ActionRequestBuilder.createSocialActionRequest(CensusICL);
     ActionRequest actionRequest = ActionRequestBuilder.createICL_EnglandActionRequest(CensusICL);
 
     ActionInstruction actionInstruction = new ActionInstruction();
@@ -187,94 +98,63 @@ public class TemplateServiceIT {
     assertThat(message, containsString(CensusICL));
     System.out.println("Msg contains: " + CensusICL);
     String notificationFilePath = getLatestSftpFileName();
+
     InputStream inputSteam = defaultSftpSessionFactory.getSession().readRaw(notificationFilePath);
+    defaultSftpSessionFactory.getSession();
+
+    String fileLine = convertInputSteamToString(inputSteam);
+
+    System.out.println("File Line: " + fileLine);
+
+    assertEquals(fileLine, "abcd put expected csv line here");
 
     try (Reader reader = new InputStreamReader(inputSteam);
-        CSVParser parser = new CSVParser(reader, CSVFormat.newFormat(':'))) {
+        CSVParser parser = new CSVParser(reader, CSVFormat.newFormat('|'))) {
 
+      // Hate this iterator, makes it very obscure.  Should maybe read the files back into a
+      // collection
+      // of their expected outputs and test that
       String notificationFile = StringUtils.substringAfterLast(notificationFilePath, "/");
       assertEquals(CensusICL, StringUtils.substringBefore(notificationFile, "_null_exRef_"));
 
-      Iterator<String> templateRow = parser.iterator().next().iterator();
-      assertEquals("\n", parser.getFirstEndOfLine());
-      assertEquals(actionRequest.getAddress().getLine1(), templateRow.next());
-      assertThat(templateRow.next(), isEmptyString()); // Line 2 should be empty
-      assertEquals(actionRequest.getAddress().getPostcode(), templateRow.next());
-      assertEquals(actionRequest.getAddress().getTownName(), templateRow.next());
-      assertEquals(actionRequest.getAddress().getLocality(), templateRow.next());
-      assertEquals(actionRequest.getAddress().getCountry(), templateRow.next());
-      assertEquals(actionRequest.getSampleUnitRef(), templateRow.next());
+      CSVRecord row = parser.iterator().next();
+
+      assertEquals("test-iac", row.get(0));
+
+      //      Iterator<String> templateRow = parser.iterator().next().iterator();
+      //      assertEquals("\n", parser.getFirstEndOfLine());
+      //      assertEquals(actionRequest.getAddress().getLine1(), templateRow.next());
+      //      assertEquals(templateRow.next(), "line_2");
+      //      assertEquals(templateRow.next(), "line_3");
+      //      assertEquals(actionRequest.getAddress().getPostcode(), templateRow.next());
+      //      assertEquals(actionRequest.getAddress().getTownName(), templateRow.next());
+      //      assertEquals(actionRequest.getAddress().getLocality(), templateRow.next());
+      //      assertEquals(actionRequest.getAddress().getCountry(), templateRow.next());
+      //      assertEquals(actionRequest.getSampleUnitRef(), templateRow.next());
     } finally {
       // Delete the file created in this test
-      assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
+      // assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
     }
   }
 
-  //  @Test
-  //  public void testTemplateGeneratesCorrectPrintFileForEnglandNotification() throws Exception {
-  //    final String icl_england = "ICL1E";
-  //
-  //    System.out.println("Ruuning ICL for England Test");
-  //
-  //    // Given
-  //    // ActionRequest actionRequest =
-  //    // ActionRequestBuilder.createICL_EnglandActionRequest(icl_england);
-  //
-  //    ActionRequest actionRequest =
-  // ActionRequestBuilder.createSocialActionRequest("SOCIALPRENOT");
-  //
-  //    ActionInstruction actionInstruction = new ActionInstruction();
-  //    actionInstruction.setActionRequest(actionRequest);
-  //    BlockingQueue<String> queue =
-  //        simpleMessageListener.listen(
-  //            SimpleMessageBase.ExchangeType.Fanout, "event-message-outbound-exchange");
-  //
-  //    simpleMessageSender.sendMessage(
-  //        "action-outbound-exchange",
-  //        "Action.Printer.binding",
-  //        ActionRequestBuilder.actionInstructionToXmlString(actionInstruction));
-  //
-  //    // When
-  //    System.out.println("Going to take from queue");
-  //    String message = queue.take();
-  //
-  //    System.out.println("Have message: " + message);
-  //
-  //    // Then
-  //    //    assertThat(message, containsString(icl_england));
-  //    assertThat(message, containsString("SOCIALPRENOT"));
-  //    String notificationFilePath = getLatestSftpFileName();
-  //    InputStream inputSteam =
-  // defaultSftpSessionFactory.getSession().readRaw(notificationFilePath);
-  //
-  //    try (Reader reader = new InputStreamReader(inputSteam);
-  //        CSVParser parser = new CSVParser(reader, CSVFormat.newFormat(':'))) {
-  //
-  //      String notificationFile = StringUtils.substringAfterLast(notificationFilePath, "/");
-  //      assertEquals("SOCIALPRENOT", StringUtils.substringBefore(notificationFile, "_"));
-  //
-  //      Iterator<String> templateRow = parser.iterator().next().iterator();
-  //
-  //      assertEquals("\n", parser.getFirstEndOfLine());
-  //      assertEquals(actionRequest.getAddress().getLine1(), templateRow.next());
-  //      assertThat(templateRow.next(), isEmptyString()); // Line 2 should be empty
-  //      assertEquals(actionRequest.getAddress().getPostcode(), templateRow.next());
-  //      assertEquals(actionRequest.getAddress().getTownName(), templateRow.next());
-  //      assertEquals(actionRequest.getAddress().getLocality(), templateRow.next());
-  //      assertEquals(actionRequest.getSampleUnitRef(), templateRow.next());
-  //    } finally {
-  //      // Delete the file created in this test
-  //      assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
-  //    }
-  //  }
+  public String convertInputSteamToString(InputStream inputStream) throws IOException {
 
+    Charset charset = Charset.defaultCharset();
+
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset))) {
+      return br.lines().collect(Collectors.joining(System.lineSeparator()));
+    }
+  }
+
+  //  DO NOT DELETE, MAYBE REQUIRED
   //  @Test
   //  public void testMostRecentAddressUsedWhenDuplicateSampleUnitRefs() throws Exception {
   //    // Given
+  //    final String CensusICL = "CENSUS_ICL";
   //    ActionInstruction firstActionInstruction =
-  //        createActionInstruction("SOCIALREM", "Old Address", "exercise_1");
+  //        createActionInstruction(CensusICL, "Old Address", "exercise_1");
   //    ActionInstruction secondActionInstruction =
-  //        createActionInstruction("SOCIALREM", "New Address", "exercise_2");
+  //        createActionInstruction(CensusICL, "New Address", "exercise_2");
   //
   //    BlockingQueue<String> queue =
   //        simpleMessageListener.listen(
@@ -288,7 +168,7 @@ public class TemplateServiceIT {
   //    // When
   //    String firstActionExportConfirmation = queue.take();
   //
-  //    assertThat(firstActionExportConfirmation, containsString("SOCIALREM"));
+  //    assertThat(firstActionExportConfirmation, containsString(CensusICL));
   //    String firstNotificationFilePath = getLatestSftpFileName();
   //    assertTrue(defaultSftpSessionFactory.getSession().remove(firstNotificationFilePath));
   //    defaultSftpSessionFactory.getSession().close();
@@ -301,13 +181,13 @@ public class TemplateServiceIT {
   //    String secondActionExportConfirmation = queue.take();
   //
   //    // Then
-  //    assertThat(secondActionExportConfirmation, containsString("SOCIALREM"));
+  //    assertThat(secondActionExportConfirmation, containsString(CensusICL));
   //    String secondNotificationFilePath = getLatestSftpFileName();
   //    InputStream inputSteam =
   //        defaultSftpSessionFactory.getSession().readRaw(secondNotificationFilePath);
   //
   //    try (Reader reader = new InputStreamReader(inputSteam);
-  //        CSVParser parser = new CSVParser(reader, CSVFormat.newFormat(':'))) {
+  //        CSVParser parser = new CSVParser(reader, CSVFormat.newFormat('|'))) {
   //      Iterator<String> firstRowColumns = parser.iterator().next().iterator();
   //      assertEquals("New Address", firstRowColumns.next());
   //    } finally {
@@ -316,18 +196,8 @@ public class TemplateServiceIT {
   //    }
   //  }
 
-  private ActionInstruction createActionInstruction(
-      String actionType, String addressLine1, String exerciseRef) {
-    ActionRequest actionRequest =
-        ActionRequestBuilder.createSocialActionRequest(actionType, addressLine1, exerciseRef);
-    ActionInstruction actionInstruction = new ActionInstruction();
-    actionInstruction.setActionRequest(actionRequest);
-
-    return actionInstruction;
-  }
-
   private void cleanSftpServer() throws IOException {
-    //      errors on remove for some reason
+    //  don't know if this actually does anything
 
     String sftpPath = "Documents/sftp/";
     SftpSession session = defaultSftpSessionFactory.getSession();
@@ -379,5 +249,15 @@ public class TemplateServiceIT {
     System.out.println("Got latest file" + latestFile.getFilename());
 
     return sftpPath + latestFile.getFilename();
+  }
+
+  private ActionInstruction createActionInstruction(
+      String actionType, String addressLine1, String exerciseRef) {
+    ActionRequest actionRequest =
+        ActionRequestBuilder.createICL_EnglandActionRequest(actionType, addressLine1, exerciseRef);
+    ActionInstruction actionInstruction = new ActionInstruction();
+    actionInstruction.setActionRequest(actionRequest);
+
+    return actionInstruction;
   }
 }

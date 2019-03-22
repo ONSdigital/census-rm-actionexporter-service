@@ -23,10 +23,6 @@ public class ActionRequestBuilder {
   public static final String LOCALITY = "locality";
   public static final String SAMPLE_UNIT_REF = "sampleUR";
 
-  public static ActionRequest createSocialActionRequest(final String actionType) {
-    return createSocialActionRequest(actionType, "Prem1", "exRef");
-  }
-
   public static ActionRequest createICL_EnglandActionRequest(final String actionType) {
     return createICL_EnglandActionRequest(actionType, "Prem1", "exRef");
   }
@@ -35,6 +31,8 @@ public class ActionRequestBuilder {
       final String actionType, String addressLine1, String exerciseRef) {
     ActionAddress actionAddress = new ActionAddress();
     actionAddress.setLine1(addressLine1);
+    actionAddress.setLine2("line_2");
+    actionAddress.setLine3("line_3");
     actionAddress.setCountry(ENGLAND);
     actionAddress.setOrganisationName(ORG_NAME);
     actionAddress.setPostcode(POST_CODE);

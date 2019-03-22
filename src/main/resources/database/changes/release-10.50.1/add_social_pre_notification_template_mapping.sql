@@ -1,4 +1,4 @@
 INSERT INTO actionexporter.templatemapping
 (actiontypenamepk, templatenamefk, filenameprefix, datemodified)
 VALUES
-('SOCIALPRENOT','socialPreNotification', 'SOCIALPRENOT', now());
+('CENSUS_ICL','socialPreNotification', 'CENSUS_ICL', now());

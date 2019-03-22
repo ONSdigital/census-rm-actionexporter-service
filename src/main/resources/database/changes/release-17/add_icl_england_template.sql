@@ -1,4 +1,4 @@
-INSERT INTO actionexporter.template (templatenamepk, content, datemodified) VALUES ('iclEngland',
+INSERT INTO actionexporter.template (templatenamepk, content, datemodified) VALUES ('census_icl_en',
 '<#list actionRequests as actionRequest>' ||
 '${(actionRequest.iac?trim)!"null"}|' ||
 'ARID' ||
@@ -14,4 +14,4 @@ INSERT INTO actionexporter.template (templatenamepk, content, datemodified) VALU
 now());
 
 
-UPDATE actionexporter.templatemapping SET templatenamefk = 'iclEngland' WHERE actiontypenamepk = 'ICL_ENGLAND';
+UPDATE actionexporter.templatemapping SET templatenamefk = 'census_icl_en' WHERE actiontypenamepk = 'census_icl_en';

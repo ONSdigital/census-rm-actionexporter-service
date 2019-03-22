@@ -58,12 +58,18 @@ public class TemplateMappingEndpoint {
       throws CTPException {
     log.with("action_type", actionType).debug("Entering findTemplateMapping");
     TemplateMapping result = templateMappingService.retrieveTemplateMappingByActionType(actionType);
+
     if (result == null) {
+      System.out.println("Couldn't find template mapping for: " + actionType);
+
       throw new CTPException(
           CTPException.Fault.RESOURCE_NOT_FOUND,
           "Template Mapping not found for action type %s",
           actionType);
     }
+
+    System.out.println("Found template mapping for: " + actionType);
+
     return mapperFacade.map(result, TemplateMappingDTO.class);
   }
 

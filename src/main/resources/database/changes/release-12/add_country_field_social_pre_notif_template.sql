@@ -1,6 +1,6 @@
 UPDATE actionexporter.template
 SET content =
-'<#list actionRequests as actionRequest>
+'<#list actionRequests as actionSOCIALREMRequest>
 ${(actionRequest.address.line1?trim)!}:' ||
 '${(actionRequest.address.line2?trim)!}:' ||
 '${(actionRequest.address.postcode?trim)!}:' ||

@@ -12,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.BlockingQueue;
@@ -102,15 +101,6 @@ public class TemplateServiceIT {
     assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
   }
 
-  public String convertInputSteamToString(InputStream inputStream) throws IOException {
-
-    Charset charset = Charset.defaultCharset();
-
-    try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset))) {
-      return br.lines().collect(Collectors.joining(System.lineSeparator()));
-    }
-  }
-
   @Test
   public void testMostRecentAddressUsedWhenDuplicateSampleUnitRefs() throws Exception {
     // Given
@@ -154,6 +144,12 @@ public class TemplateServiceIT {
     assertEquals("test-iac|caseRef|New Address|line_2||postTown|postCode|null|PACK_CODE", fileLine);
 
     assertTrue(defaultSftpSessionFactory.getSession().remove(secondNotificationFilePath));
+  }
+
+  public String convertInputSteamToString(InputStream inputStream) throws IOException {
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+      return br.lines().collect(Collectors.joining(System.lineSeparator()));
+    }
   }
 
   private String getLatestSftpFileName() throws IOException {

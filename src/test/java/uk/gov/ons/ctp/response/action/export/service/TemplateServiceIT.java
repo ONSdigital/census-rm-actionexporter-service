@@ -1,6 +1,7 @@
 package uk.gov.ons.ctp.response.action.export.service;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 
@@ -11,16 +12,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,38 +99,9 @@ public class TemplateServiceIT {
     defaultSftpSessionFactory.getSession();
 
     String fileLine = convertInputSteamToString(inputSteam);
+    assertEquals("test-iac|caseRef|Prem1|line_2||postTown|postCode|null|PACK_CODE", fileLine);
 
-    System.out.println("File Line: " + fileLine);
-
-    assertEquals(fileLine, "abcd put expected csv line here");
-
-    try (Reader reader = new InputStreamReader(inputSteam);
-        CSVParser parser = new CSVParser(reader, CSVFormat.newFormat('|'))) {
-
-      // Hate this iterator, makes it very obscure.  Should maybe read the files back into a
-      // collection
-      // of their expected outputs and test that
-      String notificationFile = StringUtils.substringAfterLast(notificationFilePath, "/");
-      assertEquals(CensusICL, StringUtils.substringBefore(notificationFile, "_null_exRef_"));
-
-      CSVRecord row = parser.iterator().next();
-
-      assertEquals("test-iac", row.get(0));
-
-      //      Iterator<String> templateRow = parser.iterator().next().iterator();
-      //      assertEquals("\n", parser.getFirstEndOfLine());
-      //      assertEquals(actionRequest.getAddress().getLine1(), templateRow.next());
-      //      assertEquals(templateRow.next(), "line_2");
-      //      assertEquals(templateRow.next(), "line_3");
-      //      assertEquals(actionRequest.getAddress().getPostcode(), templateRow.next());
-      //      assertEquals(actionRequest.getAddress().getTownName(), templateRow.next());
-      //      assertEquals(actionRequest.getAddress().getLocality(), templateRow.next());
-      //      assertEquals(actionRequest.getAddress().getCountry(), templateRow.next());
-      //      assertEquals(actionRequest.getSampleUnitRef(), templateRow.next());
-    } finally {
-      // Delete the file created in this test
-      // assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
-    }
+    assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
   }
 
   public String convertInputSteamToString(InputStream inputStream) throws IOException {

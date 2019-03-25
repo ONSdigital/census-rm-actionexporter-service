@@ -16,12 +16,12 @@ import uk.gov.ons.ctp.response.action.message.instruction.Priority;
 
 public class ActionRequestBuilder {
 
-  public static final String ENGLAND = "E";
-  public static final String ORG_NAME = "Castle of Frankenstein";
-  public static final String POST_CODE = "postCode";
-  public static final String POST_TOWN = "postTown";
-  public static final String LOCALITY = "locality";
-  public static final String SAMPLE_UNIT_REF = "sampleUR";
+  private static final String ENGLAND = "E";
+  private static final String ORG_NAME = "Castle of Frankenstein";
+  private static final String POST_CODE = "postCode";
+  private static final String POST_TOWN = "postTown";
+  private static final String LOCALITY = "locality";
+  private static final String SAMPLE_UNIT_REF = "sampleUR";
 
   public static ActionRequest createICL_EnglandActionRequest(final String actionType) {
     return createICL_EnglandActionRequest(actionType, "Prem1", "exRef");

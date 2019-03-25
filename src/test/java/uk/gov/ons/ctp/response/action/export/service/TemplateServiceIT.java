@@ -40,6 +40,7 @@ import uk.gov.ons.tools.rabbit.SimpleMessageSender;
 @ActiveProfiles("test")
 public class TemplateServiceIT {
   private static final Logger log = LoggerFactory.getLogger(TemplateServiceIT.class);
+  public static final String ICL1E = "ICL1E";
 
   @Autowired private AppConfig appConfig;
 
@@ -68,10 +69,8 @@ public class TemplateServiceIT {
 
   @Test
   public void testTemplateGeneratesCorrectPrintFileForCensusICL() throws Exception {
-    final String CensusICL = "ICL1E";
-
     // Given
-    ActionRequest actionRequest = ActionRequestBuilder.createICL_EnglandActionRequest(CensusICL);
+    ActionRequest actionRequest = ActionRequestBuilder.createICL_EnglandActionRequest(ICL1E);
 
     ActionInstruction actionInstruction = new ActionInstruction();
     actionInstruction.setActionRequest(actionRequest);
@@ -88,8 +87,8 @@ public class TemplateServiceIT {
     String message = queue.take();
 
     // Then
-    assertThat(message, containsString(CensusICL));
-    System.out.println("Msg contains: " + CensusICL);
+    assertThat(message, containsString(ICL1E));
+    System.out.println("Msg contains: " + ICL1E);
     String notificationFilePath = getLatestSftpFileName();
 
     InputStream inputSteam = defaultSftpSessionFactory.getSession().readRaw(notificationFilePath);
@@ -104,11 +103,10 @@ public class TemplateServiceIT {
   @Test
   public void testMostRecentAddressUsedWhenDuplicateSampleUnitRefs() throws Exception {
     // Given
-    final String CensusICL = "ICL1E";
     ActionInstruction firstActionInstruction =
-        createActionInstruction(CensusICL, "Old Address", "exercise_1");
+        createActionInstruction(ICL1E, "Old Address", "exercise_1");
     ActionInstruction secondActionInstruction =
-        createActionInstruction(CensusICL, "New Address", "exercise_2");
+        createActionInstruction(ICL1E, "New Address", "exercise_2");
 
     BlockingQueue<String> queue =
         simpleMessageListener.listen(
@@ -122,7 +120,7 @@ public class TemplateServiceIT {
     // When
     String firstActionExportConfirmation = queue.take();
 
-    assertThat(firstActionExportConfirmation, containsString(CensusICL));
+    assertThat(firstActionExportConfirmation, containsString(ICL1E));
     String firstNotificationFilePath = getLatestSftpFileName();
     assertTrue(defaultSftpSessionFactory.getSession().remove(firstNotificationFilePath));
     defaultSftpSessionFactory.getSession().close();
@@ -135,7 +133,7 @@ public class TemplateServiceIT {
     String secondActionExportConfirmation = queue.take();
 
     // Then
-    assertThat(secondActionExportConfirmation, containsString(CensusICL));
+    assertThat(secondActionExportConfirmation, containsString(ICL1E));
     String secondNotificationFilePath = getLatestSftpFileName();
     InputStream inputSteam =
         defaultSftpSessionFactory.getSession().readRaw(secondNotificationFilePath);

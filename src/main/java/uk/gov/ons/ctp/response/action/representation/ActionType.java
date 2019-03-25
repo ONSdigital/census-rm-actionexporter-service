@@ -11,7 +11,7 @@ public enum ActionType {
   SOCIALNOT("SOCIALNOT"),
   SOCIALREM("SOCIALREM"),
   SOCIALSNE("SOCIALSNE"),
-  CENSUS_ICL("CENSUS_ICL"),
+  ICL1E("ICL1E"),
   SOCIALICF("SOCIALICF");
 
   private String name;

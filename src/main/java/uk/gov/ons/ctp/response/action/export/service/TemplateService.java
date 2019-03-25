@@ -40,16 +40,7 @@ public class TemplateService {
 
   @Autowired private freemarker.template.Configuration configuration;
 
-  //  public TemplateExpression retrieveTemplate(String templateName) {
-  //    return repository.findOne(templateName);
-  //  }
-
-  //  public List<TemplateExpression> retrieveAllTemplates() {
-  //    return repository.findAll();
-  //  }
-
-  public TemplateExpression storeTemplate(String templateName, InputStream fileContents)
-      throws CTPException {
+  public void storeTemplate(String templateName, InputStream fileContents) throws CTPException {
     String stringValue = getStringFromInputStream(fileContents);
     if (StringUtils.isEmpty(stringValue)) {
       log.error(EXCEPTION_STORE_TEMPLATE);
@@ -63,8 +54,6 @@ public class TemplateService {
     template = repository.save(template);
 
     configuration.clearTemplateCache();
-
-    return template;
   }
 
   public ByteArrayOutputStream stream(
@@ -96,11 +85,12 @@ public class TemplateService {
       throw new RuntimeException("Error reading freemarker template");
     }
 
-    log.debug("Received template: " + template.getName());
-
     if (template == null) {
       throw new IllegalStateException(ERROR_RETRIEVING_FREEMARKER_TEMPLATE);
     }
+
+    log.debug("Retrieved template: " + template.getName());
+
     return template;
   }
 

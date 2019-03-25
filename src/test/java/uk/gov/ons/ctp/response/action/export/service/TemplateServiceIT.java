@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.integration.sftp.session.DefaultSftpSessionFactory;
-import org.springframework.integration.sftp.session.SftpSession;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -52,7 +51,6 @@ public class TemplateServiceIT {
 
   @Before
   public void setUp() throws IOException {
-    cleanSftpServer();
     Rabbitmq rabbitConfig = this.appConfig.getRabbitmq();
     simpleMessageSender =
         new SimpleMessageSender(
@@ -71,7 +69,7 @@ public class TemplateServiceIT {
 
   @Test
   public void testTemplateGeneratesCorrectPrintFileForCensusICL() throws Exception {
-    final String CensusICL = "CENSUS_ICL";
+    final String CensusICL = "ICL1E";
 
     // Given
     ActionRequest actionRequest = ActionRequestBuilder.createICL_EnglandActionRequest(CensusICL);
@@ -113,88 +111,49 @@ public class TemplateServiceIT {
     }
   }
 
-  //  DO NOT DELETE, MAYBE REQUIRED
-  //  @Test
-  //  public void testMostRecentAddressUsedWhenDuplicateSampleUnitRefs() throws Exception {
-  //    // Given
-  //    final String CensusICL = "CENSUS_ICL";
-  //    ActionInstruction firstActionInstruction =
-  //        createActionInstruction(CensusICL, "Old Address", "exercise_1");
-  //    ActionInstruction secondActionInstruction =
-  //        createActionInstruction(CensusICL, "New Address", "exercise_2");
-  //
-  //    BlockingQueue<String> queue =
-  //        simpleMessageListener.listen(
-  //            SimpleMessageBase.ExchangeType.Fanout, "event-message-outbound-exchange");
-  //
-  //    simpleMessageSender.sendMessage(
-  //        "action-outbound-exchange",
-  //        "Action.Printer.binding",
-  //        ActionRequestBuilder.actionInstructionToXmlString(firstActionInstruction));
-  //
-  //    // When
-  //    String firstActionExportConfirmation = queue.take();
-  //
-  //    assertThat(firstActionExportConfirmation, containsString(CensusICL));
-  //    String firstNotificationFilePath = getLatestSftpFileName();
-  //    assertTrue(defaultSftpSessionFactory.getSession().remove(firstNotificationFilePath));
-  //    defaultSftpSessionFactory.getSession().close();
-  //
-  //    simpleMessageSender.sendMessage(
-  //        "action-outbound-exchange",
-  //        "Action.Printer.binding",
-  //        ActionRequestBuilder.actionInstructionToXmlString(secondActionInstruction));
-  //
-  //    String secondActionExportConfirmation = queue.take();
-  //
-  //    // Then
-  //    assertThat(secondActionExportConfirmation, containsString(CensusICL));
-  //    String secondNotificationFilePath = getLatestSftpFileName();
-  //    InputStream inputSteam =
-  //        defaultSftpSessionFactory.getSession().readRaw(secondNotificationFilePath);
-  //
-  //    try (Reader reader = new InputStreamReader(inputSteam);
-  //        CSVParser parser = new CSVParser(reader, CSVFormat.newFormat('|'))) {
-  //      Iterator<String> firstRowColumns = parser.iterator().next().iterator();
-  //      assertEquals("New Address", firstRowColumns.next());
-  //    } finally {
-  //      // Delete the file created in this test
-  //      assertTrue(defaultSftpSessionFactory.getSession().remove(secondNotificationFilePath));
-  //    }
-  //  }
+  @Test
+  public void testMostRecentAddressUsedWhenDuplicateSampleUnitRefs() throws Exception {
+    // Given
+    final String CensusICL = "ICL1E";
+    ActionInstruction firstActionInstruction =
+        createActionInstruction(CensusICL, "Old Address", "exercise_1");
+    ActionInstruction secondActionInstruction =
+        createActionInstruction(CensusICL, "New Address", "exercise_2");
 
-  private void cleanSftpServer() throws IOException {
-    //  don't know if this actually does anything
+    BlockingQueue<String> queue =
+        simpleMessageListener.listen(
+            SimpleMessageBase.ExchangeType.Fanout, "event-message-outbound-exchange");
 
-    String sftpPath = "Documents/sftp/";
-    SftpSession session = defaultSftpSessionFactory.getSession();
+    simpleMessageSender.sendMessage(
+        "action-outbound-exchange",
+        "Action.Printer.binding",
+        ActionRequestBuilder.actionInstructionToXmlString(firstActionInstruction));
 
-    Comparator<ChannelSftp.LsEntry> sortByModifiedTimeDescending =
-        (f1, f2) -> Integer.compare(f2.getAttrs().getMTime(), f1.getAttrs().getMTime());
+    // When
+    String firstActionExportConfirmation = queue.take();
 
-    try {
-      while (true) {
-        ChannelSftp.LsEntry[] files = session.list(sftpPath);
+    assertThat(firstActionExportConfirmation, containsString(CensusICL));
+    String firstNotificationFilePath = getLatestSftpFileName();
+    assertTrue(defaultSftpSessionFactory.getSession().remove(firstNotificationFilePath));
+    defaultSftpSessionFactory.getSession().close();
 
-        ChannelSftp.LsEntry latestFile =
-            Arrays.stream(files)
-                .filter(f -> f.getFilename().endsWith(".csv"))
-                .min(sortByModifiedTimeDescending)
-                .orElseThrow(() -> new RuntimeException("No file on SFTP"));
+    simpleMessageSender.sendMessage(
+        "action-outbound-exchange",
+        "Action.Printer.binding",
+        ActionRequestBuilder.actionInstructionToXmlString(secondActionInstruction));
 
-        String file_path = sftpPath + latestFile.getFilename();
-        System.out.println("file path to remove: " + file_path);
-        session.remove(file_path);
-      }
-    } catch (Exception ex) {
-      System.out.println(ex.getMessage());
-    }
+    String secondActionExportConfirmation = queue.take();
 
-    ChannelSftp.LsEntry[] files = session.list(sftpPath);
+    // Then
+    assertThat(secondActionExportConfirmation, containsString(CensusICL));
+    String secondNotificationFilePath = getLatestSftpFileName();
+    InputStream inputSteam =
+        defaultSftpSessionFactory.getSession().readRaw(secondNotificationFilePath);
 
-    Object[] blah = Arrays.stream(files).filter(f -> f.getFilename().endsWith(".csv")).toArray();
+    String fileLine = convertInputSteamToString(inputSteam);
+    assertEquals("test-iac|caseRef|New Address|line_2||postTown|postCode|null|PACK_CODE", fileLine);
 
-    System.out.println("Latest File Length list: " + blah.length);
+    assertTrue(defaultSftpSessionFactory.getSession().remove(secondNotificationFilePath));
   }
 
   private String getLatestSftpFileName() throws IOException {

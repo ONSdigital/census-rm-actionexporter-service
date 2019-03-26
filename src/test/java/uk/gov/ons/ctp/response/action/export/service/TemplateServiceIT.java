@@ -41,6 +41,7 @@ import uk.gov.ons.tools.rabbit.SimpleMessageSender;
 public class TemplateServiceIT {
   private static final Logger log = LoggerFactory.getLogger(TemplateServiceIT.class);
   public static final String ICL1E = "ICL1E";
+  public static final String P_IC_ICL_1 = "P_IC_ICL1";
 
   @Autowired private AppConfig appConfig;
 
@@ -87,8 +88,7 @@ public class TemplateServiceIT {
     String message = queue.take();
 
     // Then
-    assertThat(message, containsString(ICL1E));
-    System.out.println("Msg contains: " + ICL1E);
+    assertThat(message, containsString(P_IC_ICL_1));
     String notificationFilePath = getLatestSftpFileName();
 
     InputStream inputSteam = defaultSftpSessionFactory.getSession().readRaw(notificationFilePath);
@@ -120,7 +120,7 @@ public class TemplateServiceIT {
     // When
     String firstActionExportConfirmation = queue.take();
 
-    assertThat(firstActionExportConfirmation, containsString(ICL1E));
+    assertThat(firstActionExportConfirmation, containsString(P_IC_ICL_1));
     String firstNotificationFilePath = getLatestSftpFileName();
     assertTrue(defaultSftpSessionFactory.getSession().remove(firstNotificationFilePath));
     defaultSftpSessionFactory.getSession().close();
@@ -133,7 +133,7 @@ public class TemplateServiceIT {
     String secondActionExportConfirmation = queue.take();
 
     // Then
-    assertThat(secondActionExportConfirmation, containsString(ICL1E));
+    assertThat(secondActionExportConfirmation, containsString(P_IC_ICL_1));
     String secondNotificationFilePath = getLatestSftpFileName();
     InputStream inputSteam =
         defaultSftpSessionFactory.getSession().readRaw(secondNotificationFilePath);

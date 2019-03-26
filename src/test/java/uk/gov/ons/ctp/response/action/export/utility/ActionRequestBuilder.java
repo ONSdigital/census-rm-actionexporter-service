@@ -21,7 +21,7 @@ public class ActionRequestBuilder {
   private static final String POST_CODE = "postCode";
   private static final String POST_TOWN = "postTown";
   private static final String LOCALITY = "locality";
-  private static final String SAMPLE_UNIT_REF = "sampleUR";
+  private static final String SAMPLE_UNIT_REF = "SampleUnitRef21Long21";
 
   public static ActionRequest createICL_EnglandActionRequest(final String actionType) {
     return createICL_EnglandActionRequest(actionType, "Prem1", "exRef");

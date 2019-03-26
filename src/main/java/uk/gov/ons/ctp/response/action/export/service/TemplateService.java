@@ -4,6 +4,7 @@ import static uk.gov.ons.ctp.common.util.InputStreamUtils.getStringFromInputStre
 
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
+import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.ByteArrayOutputStream;
@@ -60,7 +61,13 @@ public class TemplateService {
       List<ActionRequestInstruction> actionRequestList, String templateName) {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     try (Writer outputStreamWriter = new OutputStreamWriter(outputStream)) {
-      Template template = getTemplate(templateName);
+
+      Configuration cfg = new Configuration(Configuration.VERSION_2_3_25);
+      cfg.setClassLoaderForTemplateLoading(
+              Thread.currentThread().getContextClassLoader(), "templates");
+      cfg.setDefaultEncoding("UTF-8");
+      Template template = cfg.getTemplate("icl1e.ftl");
+      //Template template = getTemplate(templateName);
       template.process(buildDataModel(actionRequestList), outputStreamWriter);
     } catch (IOException | TemplateException e) {
       log.error("Exception thrown while templating for stream...", e);

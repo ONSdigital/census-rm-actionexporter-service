@@ -1,13 +1,13 @@
 INSERT INTO actionexporter.template (templatenamepk, content, datemodified) VALUES ('icl1e',
 '<#list actionRequests as actionRequest>' ||
-'${(actionRequest.iac?trim)!"null"}|' ||
-'${(actionRequest.caseRef?trim)!"null"}|' ||
+'${(actionRequest.iac?trim)!}|' ||
+'${(actionRequest.caseRef?trim)!}|' ||
 '${(actionRequest.address.line1?trim)!}|' ||
 '${(actionRequest.address.line2?trim)!}|' ||
 '${(actionRequest.address.line3?trim)!}|' ||
 '${(actionRequest.address.townName?trim)!}|' ||
 '${(actionRequest.address.postcode?trim)!}|' ||
-'${(actionRequest.address.sampleUnitRef)!"null"}|' ||
+'${(actionRequest.address.sampleUnitRef)!}|' ||
 'PACK_CODE
 </#list>'
 ,

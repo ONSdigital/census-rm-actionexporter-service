@@ -95,7 +95,7 @@ public class TemplateServiceIT {
     defaultSftpSessionFactory.getSession();
 
     String fileLine = convertInputSteamToString(inputSteam);
-    assertEquals("test-iac|caseRef|Prem1|line_2||postTown|postCode|null|PACK_CODE", fileLine);
+    assertEquals("test-iac|caseRef|Prem1|line_2|line_3|postTown|postCode|P_IC_ICL1", fileLine);
 
     assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
   }
@@ -139,7 +139,8 @@ public class TemplateServiceIT {
         defaultSftpSessionFactory.getSession().readRaw(secondNotificationFilePath);
 
     String fileLine = convertInputSteamToString(inputSteam);
-    assertEquals("test-iac|caseRef|New Address|line_2||postTown|postCode|null|PACK_CODE", fileLine);
+    assertEquals(
+        "test-iac|caseRef|New Address|line_2|line_3|postTown|postCode|P_IC_ICL1", fileLine);
 
     assertTrue(defaultSftpSessionFactory.getSession().remove(secondNotificationFilePath));
   }

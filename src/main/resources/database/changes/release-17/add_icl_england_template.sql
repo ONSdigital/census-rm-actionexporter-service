@@ -7,7 +7,6 @@ INSERT INTO actionexporter.template (templatenamepk, content, datemodified) VALU
 '${(actionRequest.address.line3?trim)!}|' ||
 '${(actionRequest.address.townName?trim)!}|' ||
 '${(actionRequest.address.postcode?trim)!}|' ||
-'${(actionRequest.address.sampleUnitRef)!}|' ||
 'P_IC_ICL1
 </#list>'
 ,

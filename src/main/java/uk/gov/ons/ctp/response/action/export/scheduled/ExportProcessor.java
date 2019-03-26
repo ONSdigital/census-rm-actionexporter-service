@@ -27,11 +27,16 @@ import uk.gov.ons.ctp.response.action.export.service.TemplateService;
 @Component
 public class ExportProcessor {
   private static final Logger log = LoggerFactory.getLogger(ExportProcessor.class);
+
   private final TemplateMappingService templateMappingService;
+
   private final NotificationFileCreator notificationFileCreator;
+
   private final ActionRequestRepository actionRequestRepository;
-  private final TemplateService templateService;
-  private final ExportJobRepository exportJobRepository;
+
+  private TemplateService templateService;
+
+  private ExportJobRepository exportJobRepository;
 
   public ExportProcessor(
       TemplateMappingService templateMappingService,
@@ -81,7 +86,12 @@ public class ExportProcessor {
             List<TemplateMapping> templateMappings = fileNameTemplateMappings.get(filename);
             for (TemplateMapping templateMapping : templateMappings) {
               if (templateMapping.getActionType().equals(ari.getActionType())) {
-                String filenamePrefix = getFileNamePrefix(filename, ari);
+                String filenamePrefix =
+                    filename
+                        + "_"
+                        + ari.getSurveyRef()
+                        + "_"
+                        + getExerciseRefWithoutSurveyRef(ari.getExerciseRef());
 
                 Map<String, List<ActionRequestInstruction>> templateNameMap =
                     filenamePrefixToDataMap.computeIfAbsent(filenamePrefix, key -> new HashMap<>());
@@ -97,14 +107,6 @@ public class ExportProcessor {
         });
 
     return filenamePrefixToDataMap;
-  }
-
-  private String getFileNamePrefix(String filename, ActionRequestInstruction ari) {
-    return filename
-        + "_"
-        + ari.getSurveyRef()
-        + "_"
-        + getExerciseRefWithoutSurveyRef(ari.getExerciseRef());
   }
 
   private void createAndSendFiles(

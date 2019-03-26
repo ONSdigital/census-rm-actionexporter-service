@@ -1,11 +1,21 @@
 databaseChangeLog:
 
 - changeSet:
-    id: 17-1
-    author: Luke Loze
-    changes:
-    - sqlFile:
-        comment: Add Census Spec ICL England Template
-        path: add_icl_england_template.sql
-        relativeToChangelogFile: true
-        splitStatements: false
+      id: 17-1
+      author: Luke Loze
+      changes:
+      - sqlFile:
+            comment: Add Census Spec ICL England Template
+            path: increase-sampleunit-ref-length.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+
+- changeSet:
+      id: 17-2
+      author: Luke Loze
+      changes:
+      - sqlFile:
+            comment: Increase length of
+            path: add_icl_england_template.sql
+            relativeToChangelogFile: true
+            splitStatements: false

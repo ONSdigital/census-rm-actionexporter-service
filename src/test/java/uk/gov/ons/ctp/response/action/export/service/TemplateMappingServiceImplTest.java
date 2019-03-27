@@ -22,6 +22,7 @@ import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.export.domain.TemplateMapping;
 import uk.gov.ons.ctp.response.action.export.repository.TemplateMappingRepository;
 
+/** To unit test TemplateMappingServiceImpl */
 @RunWith(MockitoJUnitRunner.class)
 public class TemplateMappingServiceImplTest {
 

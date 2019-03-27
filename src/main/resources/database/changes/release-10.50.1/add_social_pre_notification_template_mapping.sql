@@ -1,4 +1,4 @@
--- INSERT INTO actionexporter.templatemapping
--- (actiontypenamepk, templatenamefk, filenameprefix, datemodified)
--- VALUES
--- ('ICL1E','socialPreNotification', 'ICL1E', now());
+INSERT INTO actionexporter.templatemapping
+(actiontypenamepk, templatenamefk, filenameprefix, datemodified)
+VALUES
+('SOCIALPRENOT','socialPreNotification', 'SOCIALPRENOT', now());

@@ -95,7 +95,8 @@ public class TemplateServiceIT {
     defaultSftpSessionFactory.getSession();
 
     String fileLine = convertInputSteamToString(inputSteam);
-    assertEquals("test-iac|caseRef|Prem1|line_2|line_3|postTown|postCode|P_IC_ICL1", fileLine);
+    assertEquals(
+        "test-iac|caseRef|Address Line 1|line_2|line_3|postTown|postCode|P_IC_ICL1", fileLine);
 
     assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
   }

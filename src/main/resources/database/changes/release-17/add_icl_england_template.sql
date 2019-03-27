@@ -1,4 +1,6 @@
-INSERT INTO actionexporter.template (templatenamepk, content, datemodified) VALUES ('icl1e',
+INSERT INTO actionexporter.template
+(templatenamepk, content, datemodified)
+VALUES ('icl1e',
 '<#list actionRequests as actionRequest>' ||
 '${(actionRequest.iac?trim)!}|' ||
 '${(actionRequest.caseRef?trim)!}|' ||
@@ -8,8 +10,7 @@ INSERT INTO actionexporter.template (templatenamepk, content, datemodified) VALU
 '${(actionRequest.address.townName?trim)!}|' ||
 '${(actionRequest.address.postcode?trim)!}|' ||
 'P_IC_ICL1
-</#list>'
-,
+</#list>',
 now());
 
 

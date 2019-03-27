@@ -51,7 +51,7 @@ public class TemplateServiceIT {
   private SimpleMessageListener simpleMessageListener;
 
   @Before
-  public void setUp() throws IOException {
+  public void setUp() {
     Rabbitmq rabbitConfig = this.appConfig.getRabbitmq();
     simpleMessageSender =
         new SimpleMessageSender(

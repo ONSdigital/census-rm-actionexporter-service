@@ -8,7 +8,7 @@ jdk: openjdk8
 
 env:
   global:
-    - DESTINATION_IMAGE_NAME="$DOCKER_GCP_LOCATION/census-rm-actionexportersvc"
+    - DESTINATION_IMAGE_NAME="eu.gcr.io/census-rm-ci/rm/census-rm-actionexportersvc"
 
 before_install:
 - mkdir -p ~/Documents/sftp

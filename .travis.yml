@@ -8,7 +8,6 @@ jdk: openjdk8
 
 env:
   global:
-    - SOURCE_IMAGE_NAME="census-rm-actionexportersvc"
     - DESTINATION_IMAGE_NAME="$DOCKER_GCP_LOCATION/census-rm-actionexportersvc"
 
 before_install:
@@ -23,7 +22,6 @@ script: mvn verify cobertura:cobertura-integration-test
 after_success:
 - if ([ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]); then
   docker login -u "${DOCKER_GCP_USERNAME}" -p "${DOCKER_GCP_PASSWORD}" "${DOCKER_GCP_REGISTRY}";
-  docker tag "$SOURCE_IMAGE_NAME" "$DESTINATION_IMAGE_NAME";
   docker push "$DESTINATION_IMAGE_NAME";
   fi
 - bash <(curl -s https://codecov.io/bash)

@@ -15,22 +15,36 @@ import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 import uk.gov.ons.ctp.response.action.message.instruction.Priority;
 
 public class ActionRequestBuilder {
-  public static ActionRequest createSocialActionRequest(final String actionType) {
-    return createSocialActionRequest(actionType, "Prem1", "exRef");
+
+  private static final String ENGLAND = "E";
+  private static final String ORG_NAME = "Castle of Frankenstein";
+  private static final String POST_CODE = "postCode";
+  private static final String POST_TOWN = "postTown";
+  private static final String LOCALITY = "locality";
+  private static final String SAMPLE_UNIT_REF = "SampleUnitRef21Long21";
+  public static final String LINE_2 = "line_2";
+  public static final String LINE_3 = "line_3";
+  public static final String LINE_1 = "Address Line 1";
+  public static final String EXERCISE_REF = "exRef";
+
+  public static ActionRequest createICL_EnglandActionRequest(final String actionType) {
+    return createICL_EnglandActionRequest(actionType, LINE_1, EXERCISE_REF);
   }
 
-  public static ActionRequest createSocialActionRequest(
+  public static ActionRequest createICL_EnglandActionRequest(
       final String actionType, String addressLine1, String exerciseRef) {
     ActionAddress actionAddress = new ActionAddress();
     actionAddress.setLine1(addressLine1);
-    actionAddress.setCountry("E");
-    actionAddress.setOrganisationName("Castle of Frankenstein");
-    actionAddress.setPostcode("postCode");
-    actionAddress.setTownName("postTown");
-    actionAddress.setLocality("locality");
+    actionAddress.setLine2(LINE_2);
+    actionAddress.setLine3(LINE_3);
+    actionAddress.setCountry(ENGLAND);
+    actionAddress.setOrganisationName(ORG_NAME);
+    actionAddress.setPostcode(POST_CODE);
+    actionAddress.setTownName(POST_TOWN);
+    actionAddress.setLocality(LOCALITY);
 
     ActionRequest actionRequest = new ActionRequest();
-    actionRequest.setSampleUnitRef("sampleUR");
+    actionRequest.setSampleUnitRef(SAMPLE_UNIT_REF);
     actionRequest.setActionId(UUID.randomUUID().toString());
     actionRequest.setActionPlan("actionPlan");
     actionRequest.setActionType(actionType);

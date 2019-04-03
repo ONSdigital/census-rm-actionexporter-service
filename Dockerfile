@@ -8,4 +8,3 @@ RUN apt-get -yq clean
 COPY target/$JAR_FILE /opt/census-rm-actionexportersvc.jar
 
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar /opt/census-rm-actionexportersvc.jar" ]
-

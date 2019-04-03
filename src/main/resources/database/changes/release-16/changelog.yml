@@ -1,5 +1,15 @@
 databaseChangeLog:
 
+- ChangeSet:
+    id: 16-0
+    author: Luke Loze
+    changes:
+    - sqlFile:
+        comment: DROP pgcrypto to fix bug
+        path: pgcrypto_fix.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+
 - changeSet:
     id: 16-1
     author: Adam Hawtin, Liam Toozer

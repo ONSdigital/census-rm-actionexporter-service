@@ -1,0 +1,31 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 17-1
+      author: Luke Loze
+      changes:
+        - sqlFile:
+            comment: Add Census Spec ICL England Template
+            path: increase_sampleunit_ref_length.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+
+  - changeSet:
+      id: 17-2
+      author: Luke Loze
+      changes:
+        - sqlFile:
+            comment: Increase length of sample unit ref columns
+            path: add_icl_england_template.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+
+  - changeSet:
+      id: 17-3
+      author: Adam Hawtin
+      changes:
+        - sqlFile:
+            comment: Add address line 3 column
+            path: add_address_line3_column_to_address_table.sql
+            relativeToChangelogFile: true
+            splitStatements: false

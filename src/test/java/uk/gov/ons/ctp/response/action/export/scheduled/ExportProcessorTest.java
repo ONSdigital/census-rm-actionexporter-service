@@ -48,7 +48,7 @@ public class ExportProcessorTest {
     ActionRequestInstruction ari = new ActionRequestInstruction();
     ari.setActionId(UUID.randomUUID());
     ari.setActionType(actionType);
-    ari.setSurveyRef("SURVEYREF");
+    ari.setPackCode("PACKCODE");
     ari.setExerciseRef("EXERCISEREF");
     ari.setResponseRequired(true);
 
@@ -89,7 +89,7 @@ public class ExportProcessorTest {
     String[] responsesRequired = {ari.getActionId().toString()};
     verify(notificationFileCreator)
         .uploadData(
-            eq("FILENAMEPREFIX_SURVEYREF_EXERCISEREF"),
+            eq("FILENAMEPREFIX_PACKCODE"),
             bosCaptor.capture(),
             eq(exportJob),
             eq(responsesRequired),

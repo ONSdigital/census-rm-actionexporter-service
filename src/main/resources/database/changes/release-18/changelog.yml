@@ -1,0 +1,12 @@
+databaseChangeLog:
+
+- changeSet:
+    id: 18-1
+    author: Richard Weeks
+    changes:
+    - sqlFile:
+        comment: Change survey ref column name to packcode
+        path: rename_column_packcode.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+

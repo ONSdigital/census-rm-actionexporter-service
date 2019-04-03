@@ -30,7 +30,7 @@ import uk.gov.ons.ctp.response.action.export.repository.ExportFileRepository;
 public class NotificationFileCreatorTest {
 
   private static final SimpleDateFormat FILENAME_DATE_FORMAT =
-      new SimpleDateFormat("ddMMyyyy_HHmm");
+      new SimpleDateFormat("ddMMyyyy_HHmmss");
 
   @Mock private Clock clock;
   @Mock private ActionRequestRepository actionRequestRepository;

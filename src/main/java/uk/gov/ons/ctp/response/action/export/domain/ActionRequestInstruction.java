@@ -94,8 +94,8 @@ public class ActionRequestInstruction {
   @Column(name = "datestored")
   private Timestamp dateStored;
 
-  @Column(name = "surveyref")
-  private String surveyRef;
+  @Column(name = "packcode")
+  private String packCode;
 
   @Column(name = "exerciseref")
   private String exerciseRef;

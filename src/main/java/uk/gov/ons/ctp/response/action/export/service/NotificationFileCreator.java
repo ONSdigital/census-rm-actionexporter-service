@@ -18,7 +18,7 @@ public class NotificationFileCreator {
   private static final Logger log = LoggerFactory.getLogger(NotificationFileCreator.class);
 
   private static final SimpleDateFormat FILENAME_DATE_FORMAT =
-      new SimpleDateFormat("ddMMyyyy_HHmm");
+      new SimpleDateFormat("ddMMyyyy_HHmmss");
 
   private final SftpServicePublisher sftpService;
 

@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.ons.ctp.response.action.export.domain.ActionRequestInstruction;
@@ -86,12 +85,7 @@ public class ExportProcessor {
             List<TemplateMapping> templateMappings = fileNameTemplateMappings.get(filename);
             for (TemplateMapping templateMapping : templateMappings) {
               if (templateMapping.getActionType().equals(ari.getActionType())) {
-                String filenamePrefix =
-                    filename
-                        + "_"
-                        + ari.getSurveyRef()
-                        + "_"
-                        + getExerciseRefWithoutSurveyRef(ari.getExerciseRef());
+                String filenamePrefix = filename + "_" + ari.getPackCode();
 
                 Map<String, List<ActionRequestInstruction>> templateNameMap =
                     filenamePrefixToDataMap.computeIfAbsent(filenamePrefix, key -> new HashMap<>());
@@ -154,10 +148,5 @@ public class ExportProcessor {
     }
 
     return mergedStream;
-  }
-
-  private String getExerciseRefWithoutSurveyRef(String exerciseRef) {
-    String exerciseRefWithoutSurveyRef = StringUtils.substringAfter(exerciseRef, "_");
-    return StringUtils.defaultIfEmpty(exerciseRefWithoutSurveyRef, exerciseRef);
   }
 }

@@ -9,13 +9,26 @@ import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.jcraft.jsch.ChannelSftp;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
+
+//import org.apache.tomcat.jni.File;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,12 +40,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.ons.ctp.common.message.rabbit.Rabbitmq;
 import uk.gov.ons.ctp.response.action.export.config.AppConfig;
+import uk.gov.ons.ctp.response.action.export.domain.PrintFileMainfest;
+import uk.gov.ons.ctp.response.action.export.domain.PrintFilesInfo;
 import uk.gov.ons.ctp.response.action.export.utility.ActionRequestBuilder;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 import uk.gov.ons.tools.rabbit.SimpleMessageBase;
 import uk.gov.ons.tools.rabbit.SimpleMessageListener;
 import uk.gov.ons.tools.rabbit.SimpleMessageSender;
+
+import javax.xml.bind.DatatypeConverter;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration
@@ -94,11 +111,39 @@ public class TemplateServiceIT {
     InputStream inputSteam = defaultSftpSessionFactory.getSession().readRaw(notificationFilePath);
     defaultSftpSessionFactory.getSession();
 
-    String fileLine = convertInputSteamToString(inputSteam);
+    String fileLines = IOUtils.toString(inputSteam).trim();
     assertEquals(
-        "test-iac|caseRef|Address Line 1|line_2|line_3|postTown|postCode|P_IC_ICL1", fileLine);
+        "test-iac|caseRef|Address Line 1|line_2|line_3|postTown|postCode|P_IC_ICL1", fileLines);
 
-    assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
+
+    //Now look for Manifest file
+      PrintFileMainfest expectManifest = createExpectedManifest(fileLines, notificationFilePath);
+
+      int a = 1;
+
+      //Clear up
+      assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
+  }
+
+
+  private PrintFileMainfest createExpectedManifest(String fileLines, String filepath) throws IOException, NoSuchAlgorithmException {
+    long bytes = fileLines.getBytes().length;
+    String filename = FilenameUtils.getName(filepath);
+    String checksum = getMd5Checksum(fileLines);
+
+    PrintFilesInfo printFilesInfo = new PrintFilesInfo(bytes, filename, "./", checksum);
+    List<PrintFilesInfo> files = new ArrayList<>(Arrays.asList(printFilesInfo));
+
+    return new PrintFileMainfest(1, files, "ONS_RM",
+            LocalDateTime.now(),  "Initial contact letter households - England",
+                    "PPD1.1", 1 );
+  }
+
+  private String getMd5Checksum(String fileContents) throws IOException, NoSuchAlgorithmException {
+    MessageDigest md = MessageDigest.getInstance("MD5");
+    md.update(fileContents.getBytes());
+    byte[] digest = md.digest();
+    return DatatypeConverter.printHexBinary(digest).toUpperCase();
   }
 
   @Test
@@ -139,17 +184,11 @@ public class TemplateServiceIT {
     InputStream inputSteam =
         defaultSftpSessionFactory.getSession().readRaw(secondNotificationFilePath);
 
-    String fileLine = convertInputSteamToString(inputSteam);
+    String fileLine = IOUtils.toString(inputSteam).trim();
     assertEquals(
         "test-iac|caseRef|New Address|line_2|line_3|postTown|postCode|P_IC_ICL1", fileLine);
 
     assertTrue(defaultSftpSessionFactory.getSession().remove(secondNotificationFilePath));
-  }
-
-  public String convertInputSteamToString(InputStream inputStream) throws IOException {
-    try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
-      return br.lines().collect(Collectors.joining(System.lineSeparator()));
-    }
   }
 
   private String getLatestSftpFileName() throws IOException {

@@ -6,10 +6,6 @@ services:
 language: java
 jdk: openjdk8
 
-env:
-  global:
-    - DESTINATION_IMAGE_NAME="eu.gcr.io/census-rm-ci/rm/census-rm-actionexportersvc"
-
 before_install:
 - mkdir -p ~/Documents/sftp
 - cp .maven.settings.xml "$HOME"/.m2/settings.xml
@@ -22,7 +18,7 @@ script: mvn verify cobertura:cobertura-integration-test
 after_success:
 - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   docker login -u "${DOCKER_GCP_USERNAME}" -p "${DOCKER_GCP_PASSWORD}" "${DOCKER_GCP_REGISTRY}";
-  docker push "$DESTINATION_IMAGE_NAME";
+  docker push "eu.gcr.io/census-rm-ci/rm/census-rm-actionexportersvc";
   fi
 - bash <(curl -s https://codecov.io/bash)
 

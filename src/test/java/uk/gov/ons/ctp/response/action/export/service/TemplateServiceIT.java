@@ -95,24 +95,6 @@ public class TemplateServiceIT {
         removeAllFilesFromSftpServer();
     }
 
-    private void removeAllFilesFromSftpServer() throws IOException {
-        String sftpPath = DOCUMENTS_SFTP;
-
-        Arrays.stream(defaultSftpSessionFactory.getSession().list(sftpPath))
-                .filter(f -> f.getFilename().endsWith(".csv") || f.getFilename().endsWith(".manifest"))
-                .peek(f -> {
-                    String filetoDeletePath = sftpPath + f.getFilename();
-
-                    try {
-                        defaultSftpSessionFactory.getSession().remove(filetoDeletePath);
-                    } catch (IOException e) {
-                        System.out.println("Non Fatal Error, Failed to delete file: " + filetoDeletePath);
-                    }
-                }).toArray();
-
-    }
-
-
     @Test
     public void testTemplateGeneratesCorrectPrintFileForCensusICL() throws Exception {
         // Given
@@ -154,42 +136,10 @@ public class TemplateServiceIT {
                         + actualManifest.getManifestCreated(),
                 secondsDifference < 60);
 
-        //This stops us having to ignore the field, which feels a bit cack
+        //This stops us having to ignore the field, which feels a bit cack, can junit handle this
         actualManifest.setManifestCreated(expectedManifest.getManifestCreated());
         Assert.assertTrue(EqualsBuilder.reflectionEquals(expectedManifest, actualManifest));
-
-//        //Clear up
-//        //This can be done as part of setup/teardown, doesn't
-//        assertTrue(defaultSftpSessionFactory.getSession().remove(notificationFilePath));
     }
-
-    private long getSecondsDifferenceBetweenManifests(String expectedCreatedDateTime, String actualCreatedDateTime) {
-        long expectedEpoch = Instant.parse(expectedCreatedDateTime).getEpochSecond();
-        long actualEpoch = Instant.parse(actualCreatedDateTime).getEpochSecond();
-
-        return expectedEpoch - actualEpoch;
-    }
-
-    private PrintFileMainfest getActualPrintFileManifest(String csvFilePath) throws IOException {
-        String expectedManifestFileName = createExpectedManifestFileName(csvFilePath);
-        String actionManifestFileContents = sftpFileToString(expectedManifestFileName);
-
-        return objectMapper.readValue(actionManifestFileContents, PrintFileMainfest.class);
-    }
-
-    private String sftpFileToString(String filePath) throws IOException {
-        InputStream inputSteam = defaultSftpSessionFactory.getSession().readRaw(filePath);
-        //Does this need to be here?
-        defaultSftpSessionFactory.getSession();
-
-        return IOUtils.toString(inputSteam);
-    }
-
-    private String createExpectedManifestFileName(String notificationFilePath) {
-        //Feels like this should be more elegant
-        return notificationFilePath.replace(".csv", ".manifest");
-    }
-
 
     private PrintFileMainfest createExpectedManifest(String fileLines, String filePath) throws IOException {
         long bytesLength = fileLines.getBytes().length;
@@ -251,6 +201,45 @@ public class TemplateServiceIT {
         assertTrue(defaultSftpSessionFactory.getSession().remove(secondNotificationFilePath));
     }
 
+    @Test
+    public void testIncaseWhereManifestFileWriteFailsThatAllIsTransactional() {
+        // No idea how to test for this, but should be some transactional test
+        // Ideally we want to allow it to get as far as writing the csv file, but fail on the manifest file
+        // But then fix it..  Should be nice and easy...
+        // We could noble the exportFileRepository, Get it and hack it for this test (ok in a different file)
+        // So when we check the filename for duplicate it fails for the first manifest file write.
+        // Then allow it to work next time, and all should be good?
+
+        // Anyway this is a holder for now
+    }
+
+    private long getSecondsDifferenceBetweenManifests(String expectedCreatedDateTime, String actualCreatedDateTime) {
+        long expectedEpoch = Instant.parse(expectedCreatedDateTime).getEpochSecond();
+        long actualEpoch = Instant.parse(actualCreatedDateTime).getEpochSecond();
+
+        return expectedEpoch - actualEpoch;
+    }
+
+    private PrintFileMainfest getActualPrintFileManifest(String csvFilePath) throws IOException {
+        String expectedManifestFileName = createExpectedManifestFileName(csvFilePath);
+        String actionManifestFileContents = sftpFileToString(expectedManifestFileName);
+
+        return objectMapper.readValue(actionManifestFileContents, PrintFileMainfest.class);
+    }
+
+    private String sftpFileToString(String filePath) throws IOException {
+        InputStream inputSteam = defaultSftpSessionFactory.getSession().readRaw(filePath);
+        //Does this need to be here?
+        defaultSftpSessionFactory.getSession();
+
+        return IOUtils.toString(inputSteam);
+    }
+
+    private String createExpectedManifestFileName(String notificationFilePath) {
+        //Feels like this should be more elegant
+        return notificationFilePath.replace(".csv", ".manifest");
+    }
+
     private String getLatestSftpFileName() throws IOException {
         Comparator<ChannelSftp.LsEntry> sortByModifiedTimeDescending =
                 (f1, f2) -> Integer.compare(f2.getAttrs().getMTime(), f1.getAttrs().getMTime());
@@ -281,4 +270,21 @@ public class TemplateServiceIT {
 
         return actionInstruction;
     }
+
+    private void removeAllFilesFromSftpServer() throws IOException {
+        String sftpPath = DOCUMENTS_SFTP;
+
+        Arrays.stream(defaultSftpSessionFactory.getSession().list(sftpPath))
+                .filter(f -> f.getFilename().endsWith(".csv") || f.getFilename().endsWith(".manifest"))
+                .peek(f -> {
+                    String filetoDeletePath = sftpPath + f.getFilename();
+
+                    try {
+                        defaultSftpSessionFactory.getSession().remove(filetoDeletePath);
+                    } catch (IOException e) {
+                        System.out.println("Non Fatal Error, Failed to delete file: " + filetoDeletePath);
+                    }
+                }).toArray();
+    }
+
 }

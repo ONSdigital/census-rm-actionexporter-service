@@ -27,7 +27,7 @@ import uk.gov.ons.ctp.response.action.export.repository.ActionRequestRepository;
 import uk.gov.ons.ctp.response.action.export.repository.ExportFileRepository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NotificationFileCreatorTest {
+public class NotificationAndManifestFileCreatorTest {
 
   private static final SimpleDateFormat FILENAME_DATE_FORMAT =
       new SimpleDateFormat("ddMMyyyy_HHmmss");
@@ -37,7 +37,7 @@ public class NotificationFileCreatorTest {
   @Mock private SftpServicePublisher sftpService;
   @Mock private EventPublisher eventPublisher;
   @Mock private ExportFileRepository exportFileRepository;
-  @InjectMocks private NotificationFileCreator notificationFileCreator;
+  @InjectMocks private NotificationAndManifestFileCreator notificationAndManifestFileCreator;
 
   @Test
   public void shouldCreateTheCorrectFilename() {
@@ -50,7 +50,7 @@ public class NotificationFileCreatorTest {
     given(clock.millis()).willReturn(now.getTime());
 
     // When
-    notificationFileCreator.uploadData(
+    notificationAndManifestFileCreator.uploadData(
         "TESTFILENAMEPREFIX", bos, exportJob, responseRequiredList, 666);
 
     // Then
@@ -82,7 +82,7 @@ public class NotificationFileCreatorTest {
 
     // When
     try {
-      notificationFileCreator.uploadData(
+      notificationAndManifestFileCreator.uploadData(
           "TESTFILENAMEPREFIX", bos, exportJob, responseRequiredList, 666);
     } catch (RuntimeException ex) {
       expectedExceptionThrown = true;

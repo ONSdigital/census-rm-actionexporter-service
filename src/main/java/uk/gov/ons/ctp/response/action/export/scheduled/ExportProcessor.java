@@ -19,7 +19,7 @@ import uk.gov.ons.ctp.response.action.export.domain.ExportJob;
 import uk.gov.ons.ctp.response.action.export.domain.TemplateMapping;
 import uk.gov.ons.ctp.response.action.export.repository.ActionRequestRepository;
 import uk.gov.ons.ctp.response.action.export.repository.ExportJobRepository;
-import uk.gov.ons.ctp.response.action.export.service.NotificationFileCreator;
+import uk.gov.ons.ctp.response.action.export.service.NotificationAndManifestFileCreator;
 import uk.gov.ons.ctp.response.action.export.service.TemplateMappingService;
 import uk.gov.ons.ctp.response.action.export.service.TemplateService;
 
@@ -29,7 +29,7 @@ public class ExportProcessor {
 
   private final TemplateMappingService templateMappingService;
 
-  private final NotificationFileCreator notificationFileCreator;
+  private final NotificationAndManifestFileCreator notificationAndManifestFileCreator;
 
   private final ActionRequestRepository actionRequestRepository;
 
@@ -38,13 +38,13 @@ public class ExportProcessor {
   private ExportJobRepository exportJobRepository;
 
   public ExportProcessor(
-      TemplateMappingService templateMappingService,
-      NotificationFileCreator notificationFileCreator,
-      ActionRequestRepository actionRequestRepository,
-      TemplateService templateService,
-      ExportJobRepository exportJobRepository) {
+          TemplateMappingService templateMappingService,
+          NotificationAndManifestFileCreator notificationAndManifestFileCreator,
+          ActionRequestRepository actionRequestRepository,
+          TemplateService templateService,
+          ExportJobRepository exportJobRepository) {
     this.templateMappingService = templateMappingService;
-    this.notificationFileCreator = notificationFileCreator;
+    this.notificationAndManifestFileCreator = notificationAndManifestFileCreator;
     this.actionRequestRepository = actionRequestRepository;
     this.templateService = templateService;
     this.exportJobRepository = exportJobRepository;
@@ -126,12 +126,15 @@ public class ExportProcessor {
                     });
               });
 
-          notificationFileCreator.uploadData(
+          notificationAndManifestFileCreator.uploadData(
               filenamePrefix,
               getMergedStreams(streamList),
               exportJob,
               responseRequiredList.toArray(new String[0]),
               actionCount.get());
+
+
+
         });
   }
 

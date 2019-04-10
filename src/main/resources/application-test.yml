@@ -24,4 +24,4 @@ rabbitmq:
   port: 7672
 
 export-schedule:
-  cron-expression: "0 * * * * ?"
+  cron-expression: "* * * * * *"

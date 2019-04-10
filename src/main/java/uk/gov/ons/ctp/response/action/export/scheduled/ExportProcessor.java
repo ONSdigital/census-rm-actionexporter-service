@@ -66,7 +66,7 @@ public class ExportProcessor {
 
     createAndSendFiles(filenamePrefixToDataMap, exportJob);
   }
-
+  
   private Map<String, Map<String, List<ActionRequestInstruction>>> prepareData(
       ExportJob exportJob) {
     Stream<ActionRequestInstruction> actionRequestInstructions =
@@ -83,6 +83,7 @@ public class ExportProcessor {
         ari -> {
           for (String filename : filenames) {
             List<TemplateMapping> templateMappings = fileNameTemplateMappings.get(filename);
+
             for (TemplateMapping templateMapping : templateMappings) {
               if (templateMapping.getActionType().equals(ari.getActionType())) {
                 String filenamePrefix = filename + "_" + ari.getPackCode();

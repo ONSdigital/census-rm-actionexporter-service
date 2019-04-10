@@ -1,14 +1,29 @@
 package uk.gov.ons.ctp.response.action.export.service;
 
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import com.jcraft.jsch.ChannelSftp;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import javax.xml.bind.JAXBException;
 import net.logstash.logback.encoder.org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,261 +45,260 @@ import uk.gov.ons.tools.rabbit.SimpleMessageBase;
 import uk.gov.ons.tools.rabbit.SimpleMessageListener;
 import uk.gov.ons.tools.rabbit.SimpleMessageSender;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.xml.bind.DatatypeConverter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.stream.Stream;
-
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertThat;
-
-//import org.apache.tomcat.jni.File;
+// import org.apache.tomcat.jni.File;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class TemplateServiceIT {
-    private static final Logger log = LoggerFactory.getLogger(TemplateServiceIT.class);
-    public static final String ICL1E = "ICL1E";
-    public static final String P_IC_ICL_1 = "P_IC_ICL1";
-    public static final String DOCUMENTS_SFTP = "Documents/sftp/";
+  private static final Logger log = LoggerFactory.getLogger(TemplateServiceIT.class);
+  public static final String ICL1E = "ICL1E";
+  public static final String P_IC_ICL_1 = "P_IC_ICL1";
+  public static final String DOCUMENTS_SFTP = "Documents/sftp/";
 
-    @Autowired
-    private AppConfig appConfig;
+  @Autowired private AppConfig appConfig;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-    @Autowired
-    private DefaultSftpSessionFactory defaultSftpSessionFactory;
+  @Autowired private DefaultSftpSessionFactory defaultSftpSessionFactory;
 
-    private SimpleMessageSender simpleMessageSender;
-    private SimpleMessageListener simpleMessageListener;
+  private SimpleMessageSender simpleMessageSender;
+  private SimpleMessageListener simpleMessageListener;
 
-    @Before
-    public void setUp() throws IOException {
-        Rabbitmq rabbitConfig = this.appConfig.getRabbitmq();
-        simpleMessageSender =
-                new SimpleMessageSender(
-                        rabbitConfig.getHost(),
-                        rabbitConfig.getPort(),
-                        rabbitConfig.getUsername(),
-                        rabbitConfig.getPassword());
+  @Before
+  public void setUp() throws IOException {
+    Rabbitmq rabbitConfig = this.appConfig.getRabbitmq();
+    simpleMessageSender =
+        new SimpleMessageSender(
+            rabbitConfig.getHost(),
+            rabbitConfig.getPort(),
+            rabbitConfig.getUsername(),
+            rabbitConfig.getPassword());
 
-        simpleMessageListener =
-                new SimpleMessageListener(
-                        rabbitConfig.getHost(),
-                        rabbitConfig.getPort(),
-                        rabbitConfig.getUsername(),
-                        rabbitConfig.getPassword());
+    simpleMessageListener =
+        new SimpleMessageListener(
+            rabbitConfig.getHost(),
+            rabbitConfig.getPort(),
+            rabbitConfig.getUsername(),
+            rabbitConfig.getPassword());
 
-        removeAllFilesFromSftpServer();
-    }
+    removeAllFilesFromSftpServer();
+  }
 
-    @Test
-    public void testTemplateGeneratesCorrectPrintFileForCensusICL() throws Exception {
-        // Given
-        ActionRequest actionRequest = ActionRequestBuilder.createICL_EnglandActionRequest(ICL1E);
-        ActionInstruction actionInstruction = new ActionInstruction();
-        actionInstruction.setActionRequest(actionRequest);
-        BlockingQueue<String> queue =
-                simpleMessageListener.listen(
-                        SimpleMessageBase.ExchangeType.Fanout, "event-message-outbound-exchange");
+  @Test
+  public void testTemplateGeneratesCorrectPrintFileForCensusICL() throws Exception {
+    // Given
+    BlockingQueue<String> queue =
+        simpleMessageListener.listen(
+            SimpleMessageBase.ExchangeType.Fanout, "event-message-outbound-exchange");
 
-        simpleMessageSender.sendMessage(
-                "action-outbound-exchange",
-                "Action.Printer.binding",
-                ActionRequestBuilder.actionInstructionToXmlString(actionInstruction));
+    simpleMessageSender.sendMessage(
+        "action-outbound-exchange",
+        "Action.Printer.binding",
+        createActionInstrunctionPayload(ICL1E));
 
-        // When
-        String message = queue.take();
+    // When
+    String message = queue.take();
 
-        // Then
-        assertThat(message, containsString(P_IC_ICL_1));
-        String notificationFilePath = getLatestSftpFileName();
+    // Then
+    assertThat(message, containsString(P_IC_ICL_1));
+    String notificationFilePath = getLatestSftpFileName();
 
-        InputStream inputStream = defaultSftpSessionFactory.getSession().readRaw(notificationFilePath);
-        defaultSftpSessionFactory.getSession();
+    InputStream inputStream = defaultSftpSessionFactory.getSession().readRaw(notificationFilePath);
 
-        String fileLines = IOUtils.toString(inputStream);
-        assertEquals("test-iac|caseRef|Address Line 1|line_2|line_3|postTown|postCode|P_IC_ICL1",
-                fileLines.trim());
+    String fileLines = IOUtils.toString(inputStream);
+    assertEquals("test-iac|caseRef|Address Line 1|line_2|line_3|postTown|postCode|P_IC_ICL1",
+        fileLines.trim());
 
-        PrintFileMainfest expectedManifest = createExpectedManifest(fileLines, notificationFilePath);
-        PrintFileMainfest actualManifest = getActualPrintFileManifest(notificationFilePath);
+    PrintFileMainfest expectedManifest = createExpectedManifest(fileLines, notificationFilePath);
+    PrintFileMainfest actualManifest   = getActualPrintFileManifest(notificationFilePath);
 
-        long secondsDifference = getSecondsDifferenceBetweenManifests(expectedManifest.getManifestCreated(),
-                actualManifest.getManifestCreated());
-        assertTrue("Expected createdManifest must be after actualManifest created time",
-                secondsDifference > 0);
-        assertTrue("Expected date of: " + expectedManifest.getManifestCreated()
-                        + " should be within 60 seconds of actual manifest created date: "
-                        + actualManifest.getManifestCreated(),
-                secondsDifference < 60);
+    testManifestCreatedDateTimeWithin1Minute(expectedManifest, actualManifest);
+    assertThat(expectedManifest).isEqualToIgnoringGivenFields(actualManifest, "manifestCreated");
+  }
 
-        //This stops us having to ignore the field, which feels a bit cack, can junit handle this
-        actualManifest.setManifestCreated(expectedManifest.getManifestCreated());
-        Assert.assertTrue(EqualsBuilder.reflectionEquals(expectedManifest, actualManifest));
-    }
+  private void testManifestCreatedDateTimeWithin1Minute(
+      PrintFileMainfest expectedManifest, PrintFileMainfest actualManifest) {
+    long secondsDifference =
+        getSecondsDifferenceBetweenManifests(
+            expectedManifest.getManifestCreated(), actualManifest.getManifestCreated());
+    assertTrue(
+        "Expected createdManifest must be after actualManifest created time",
+        secondsDifference > 0);
+    assertTrue(
+        "Expected date of: " + expectedManifest.getManifestCreated()
+            + " should be within 60 seconds of actual manifest created date: "
+            + actualManifest.getManifestCreated(),
+        secondsDifference < 60);
+  }
 
-    private PrintFileMainfest createExpectedManifest(String fileLines, String filePath) throws IOException {
-        long bytesLength = fileLines.getBytes().length;
-        String filename = FilenameUtils.getName(filePath);
-        String checksum = DigestUtils.md5Hex(fileLines);
-        PrintFilesInfo printFilesInfo = new PrintFilesInfo(bytesLength, checksum, "./", filename);
+  @Test
+  public void testMostRecentAddressUsedWhenDuplicateSampleUnitRefs() throws Exception {
+    // Given
+    ActionInstruction firstActionInstruction =
+        createActionInstruction(ICL1E, "Old Address", "exercise_1");
+    ActionInstruction secondActionInstruction =
+        createActionInstruction(ICL1E, "New Address", "exercise_2");
 
-        List<PrintFilesInfo> files = new ArrayList<>(Arrays.asList(printFilesInfo));
+    BlockingQueue<String> queue =
+        simpleMessageListener.listen(
+            SimpleMessageBase.ExchangeType.Fanout, "event-message-outbound-exchange");
 
-        String manifestCreatedDateTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
+    simpleMessageSender.sendMessage(
+        "action-outbound-exchange",
+        "Action.Printer.binding",
+        ActionRequestBuilder.actionInstructionToXmlString(firstActionInstruction));
 
-        return new PrintFileMainfest(1, files, "ONS_RM",
-                manifestCreatedDateTime, "Initial contact letter households - England",
-                "PPD1.1", 1);
-    }
+    // When
+    String firstActionExportConfirmation = queue.take();
 
-    @Test
-    public void testMostRecentAddressUsedWhenDuplicateSampleUnitRefs() throws Exception {
-        // Given
-        ActionInstruction firstActionInstruction =
-                createActionInstruction(ICL1E, "Old Address", "exercise_1");
-        ActionInstruction secondActionInstruction =
-                createActionInstruction(ICL1E, "New Address", "exercise_2");
+    assertThat(firstActionExportConfirmation, containsString(P_IC_ICL_1));
+    String firstNotificationFilePath = getLatestSftpFileName();
+    assertTrue(defaultSftpSessionFactory.getSession().remove(firstNotificationFilePath));
+    defaultSftpSessionFactory.getSession().close();
 
-        BlockingQueue<String> queue =
-                simpleMessageListener.listen(
-                        SimpleMessageBase.ExchangeType.Fanout, "event-message-outbound-exchange");
+    simpleMessageSender.sendMessage(
+        "action-outbound-exchange",
+        "Action.Printer.binding",
+        ActionRequestBuilder.actionInstructionToXmlString(secondActionInstruction));
 
-        simpleMessageSender.sendMessage(
-                "action-outbound-exchange",
-                "Action.Printer.binding",
-                ActionRequestBuilder.actionInstructionToXmlString(firstActionInstruction));
+    String secondActionExportConfirmation = queue.take();
 
-        // When
-        String firstActionExportConfirmation = queue.take();
+    // Then
+    assertThat(secondActionExportConfirmation, containsString(P_IC_ICL_1));
+    String secondNotificationFilePath = getLatestSftpFileName();
+    InputStream inputSteam =
+        defaultSftpSessionFactory.getSession().readRaw(secondNotificationFilePath);
 
-        assertThat(firstActionExportConfirmation, containsString(P_IC_ICL_1));
-        String firstNotificationFilePath = getLatestSftpFileName();
-        assertTrue(defaultSftpSessionFactory.getSession().remove(firstNotificationFilePath));
-        defaultSftpSessionFactory.getSession().close();
+    String fileLine = IOUtils.toString(inputSteam).trim();
+    assertEquals(
+        "test-iac|caseRef|New Address|line_2|line_3|postTown|postCode|P_IC_ICL1", fileLine);
 
-        simpleMessageSender.sendMessage(
-                "action-outbound-exchange",
-                "Action.Printer.binding",
-                ActionRequestBuilder.actionInstructionToXmlString(secondActionInstruction));
+    assertTrue(defaultSftpSessionFactory.getSession().remove(secondNotificationFilePath));
+  }
 
-        String secondActionExportConfirmation = queue.take();
+  @Test
+  public void tesWhereManifestFileWriteFailsThatAllIsTransactional() {
+    // No idea how to test for this, but should be some transactional test
+    // Ideally we want to allow it to get as far as writing the csv file, but fail on the manifest
+    // file
+    // But then fix it..  Should be nice and easy...
+    // We could noble the exportFileRepository, Get it and hack it for this test (ok in a different
+    // file)
+    // So when we check the filename for duplicate it fails for the first manifest file write.
+    // Then allow it to work next time, and all should be good?
+    // A crapper way of doing this is to pre populate the database with Manifest file names for the
+    // next minute or so,
+    // This would mean 60 filenames on the database
+    // Then it will fail away for a minute, then work?
 
-        // Then
-        assertThat(secondActionExportConfirmation, containsString(P_IC_ICL_1));
-        String secondNotificationFilePath = getLatestSftpFileName();
-        InputStream inputSteam =
-                defaultSftpSessionFactory.getSession().readRaw(secondNotificationFilePath);
+    // Anyway this is a holder for now
+  }
 
-        String fileLine = IOUtils.toString(inputSteam).trim();
-        assertEquals(
-                "test-iac|caseRef|New Address|line_2|line_3|postTown|postCode|P_IC_ICL1", fileLine);
+  private PrintFileMainfest createExpectedManifest(String fileLines, String filePath)
+      throws IOException {
+    long bytesLength = fileLines.getBytes().length;
+    String filename = FilenameUtils.getName(filePath);
+    String checksum = DigestUtils.md5Hex(fileLines);
+    PrintFilesInfo printFilesInfo = new PrintFilesInfo(bytesLength, checksum, "./", filename);
 
-        assertTrue(defaultSftpSessionFactory.getSession().remove(secondNotificationFilePath));
-    }
+    List<PrintFilesInfo> files = new ArrayList<>(Arrays.asList(printFilesInfo));
 
-    @Test
-    public void testIncaseWhereManifestFileWriteFailsThatAllIsTransactional() {
-        // No idea how to test for this, but should be some transactional test
-        // Ideally we want to allow it to get as far as writing the csv file, but fail on the manifest file
-        // But then fix it..  Should be nice and easy...
-        // We could noble the exportFileRepository, Get it and hack it for this test (ok in a different file)
-        // So when we check the filename for duplicate it fails for the first manifest file write.
-        // Then allow it to work next time, and all should be good?
+    String manifestCreatedDateTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
 
-        // Anyway this is a holder for now
-    }
+    return new PrintFileMainfest(
+        1,
+        files,
+        "ONS_RM",
+        manifestCreatedDateTime,
+        "Initial contact letter households - England",
+        "PPD1.1",
+        1);
+  }
 
-    private long getSecondsDifferenceBetweenManifests(String expectedCreatedDateTime, String actualCreatedDateTime) {
-        long expectedEpoch = Instant.parse(expectedCreatedDateTime).getEpochSecond();
-        long actualEpoch = Instant.parse(actualCreatedDateTime).getEpochSecond();
+  private long getSecondsDifferenceBetweenManifests(
+      String expectedCreatedDateTime, String actualCreatedDateTime) {
+    long expectedEpoch = Instant.parse(expectedCreatedDateTime).getEpochSecond();
+    long actualEpoch = Instant.parse(actualCreatedDateTime).getEpochSecond();
 
-        return expectedEpoch - actualEpoch;
-    }
+    return expectedEpoch - actualEpoch;
+  }
 
-    private PrintFileMainfest getActualPrintFileManifest(String csvFilePath) throws IOException {
-        String expectedManifestFileName = createExpectedManifestFileName(csvFilePath);
-        String actionManifestFileContents = sftpFileToString(expectedManifestFileName);
+  private PrintFileMainfest getActualPrintFileManifest(String csvFilePath) throws IOException {
+    String expectedManifestFileName = createExpectedManifestFileName(csvFilePath);
+    String actionManifestFileContents = sftpFileToString(expectedManifestFileName);
 
-        return objectMapper.readValue(actionManifestFileContents, PrintFileMainfest.class);
-    }
+    return objectMapper.readValue(actionManifestFileContents, PrintFileMainfest.class);
+  }
 
-    private String sftpFileToString(String filePath) throws IOException {
-        InputStream inputSteam = defaultSftpSessionFactory.getSession().readRaw(filePath);
-        //Does this need to be here?
-        defaultSftpSessionFactory.getSession();
+  private String sftpFileToString(String filePath) throws IOException {
+    InputStream inputSteam = defaultSftpSessionFactory.getSession().readRaw(filePath);
+    // Does this need to be here?
+    defaultSftpSessionFactory.getSession();
 
-        return IOUtils.toString(inputSteam);
-    }
+    return IOUtils.toString(inputSteam);
+  }
 
-    private String createExpectedManifestFileName(String notificationFilePath) {
-        //Feels like this should be more elegant
-        return notificationFilePath.replace(".csv", ".manifest");
-    }
+  private String createExpectedManifestFileName(String notificationFilePath) {
+    // Feels like this should be more elegant
+    return notificationFilePath.replace(".csv", ".manifest");
+  }
 
-    private String getLatestSftpFileName() throws IOException {
-        Comparator<ChannelSftp.LsEntry> sortByModifiedTimeDescending =
-                (f1, f2) -> Integer.compare(f2.getAttrs().getMTime(), f1.getAttrs().getMTime());
+  private String getLatestSftpFileName() throws IOException {
+    Comparator<ChannelSftp.LsEntry> sortByModifiedTimeDescending =
+        (f1, f2) -> Integer.compare(f2.getAttrs().getMTime(), f1.getAttrs().getMTime());
 
-        String sftpPath = "Documents/sftp/";
-        ChannelSftp.LsEntry[] sftpList = defaultSftpSessionFactory.getSession().list(sftpPath);
+    String sftpPath = "Documents/sftp/";
+    ChannelSftp.LsEntry[] sftpList = defaultSftpSessionFactory.getSession().list(sftpPath);
 
-        System.out.println("Latest File Length list: " + sftpList.length);
+    System.out.println("Latest File Length list: " + sftpList.length);
 
-        ChannelSftp.LsEntry latestFile =
-                Arrays.stream(sftpList)
-                        .filter(f -> f.getFilename().endsWith(".csv"))
-                        .min(sortByModifiedTimeDescending)
-                        .orElseThrow(() -> new RuntimeException("No file on SFTP"));
-        log.with("latest_file", latestFile.getFilename()).info("Found latest file");
+    ChannelSftp.LsEntry latestFile =
+        Arrays.stream(sftpList)
+            .filter(f -> f.getFilename().endsWith(".csv"))
+            .min(sortByModifiedTimeDescending)
+            .orElseThrow(() -> new RuntimeException("No file on SFTP"));
+    log.with("latest_file", latestFile.getFilename()).info("Found latest file");
 
-        System.out.println("Got latest file" + latestFile.getFilename());
+    System.out.println("Got latest file" + latestFile.getFilename());
 
-        return sftpPath + latestFile.getFilename();
-    }
+    return sftpPath + latestFile.getFilename();
+  }
 
-    private ActionInstruction createActionInstruction(
-            String actionType, String addressLine1, String exerciseRef) {
-        ActionRequest actionRequest =
-                ActionRequestBuilder.createICL_EnglandActionRequest(actionType, addressLine1, exerciseRef);
-        ActionInstruction actionInstruction = new ActionInstruction();
-        actionInstruction.setActionRequest(actionRequest);
+  private ActionInstruction createActionInstruction(
+      String actionType, String addressLine1, String exerciseRef) {
+    ActionRequest actionRequest =
+        ActionRequestBuilder.createICL_EnglandActionRequest(actionType, addressLine1, exerciseRef);
+    ActionInstruction actionInstruction = new ActionInstruction();
+    actionInstruction.setActionRequest(actionRequest);
 
-        return actionInstruction;
-    }
+    return actionInstruction;
+  }
 
-    private void removeAllFilesFromSftpServer() throws IOException {
-        String sftpPath = DOCUMENTS_SFTP;
+  private String createActionInstrunctionPayload(String actionType) throws JAXBException {
+    ActionRequest actionRequest = ActionRequestBuilder.createICL_EnglandActionRequest(actionType);
+    ActionInstruction actionInstruction = new ActionInstruction();
+    actionInstruction.setActionRequest(actionRequest);
 
-        Arrays.stream(defaultSftpSessionFactory.getSession().list(sftpPath))
-                .filter(f -> f.getFilename().endsWith(".csv") || f.getFilename().endsWith(".manifest"))
-                .peek(f -> {
-                    String filetoDeletePath = sftpPath + f.getFilename();
+    return ActionRequestBuilder.actionInstructionToXmlString(actionInstruction);
+  }
 
-                    try {
-                        defaultSftpSessionFactory.getSession().remove(filetoDeletePath);
-                    } catch (IOException e) {
-                        System.out.println("Non Fatal Error, Failed to delete file: " + filetoDeletePath);
-                    }
-                }).toArray();
-    }
+  private void removeAllFilesFromSftpServer() throws IOException {
+    String sftpPath = DOCUMENTS_SFTP;
 
+    Arrays.stream(defaultSftpSessionFactory.getSession().list(sftpPath))
+        .filter(f -> f.getFilename().endsWith(".csv") || f.getFilename().endsWith(".manifest"))
+        .peek(
+            f -> {
+              String filetoDeletePath = sftpPath + f.getFilename();
+
+              try {
+                defaultSftpSessionFactory.getSession().remove(filetoDeletePath);
+              } catch (IOException e) {
+                System.out.println("Non Fatal Error, Failed to delete file: " + filetoDeletePath);
+              }
+            })
+        .toArray();
+  }
 }

@@ -38,11 +38,11 @@ public class ExportProcessor {
   private ExportJobRepository exportJobRepository;
 
   public ExportProcessor(
-          TemplateMappingService templateMappingService,
-          NotificationAndManifestFileCreator notificationAndManifestFileCreator,
-          ActionRequestRepository actionRequestRepository,
-          TemplateService templateService,
-          ExportJobRepository exportJobRepository) {
+      TemplateMappingService templateMappingService,
+      NotificationAndManifestFileCreator notificationAndManifestFileCreator,
+      ActionRequestRepository actionRequestRepository,
+      TemplateService templateService,
+      ExportJobRepository exportJobRepository) {
     this.templateMappingService = templateMappingService;
     this.notificationAndManifestFileCreator = notificationAndManifestFileCreator;
     this.actionRequestRepository = actionRequestRepository;
@@ -132,9 +132,6 @@ public class ExportProcessor {
               exportJob,
               responseRequiredList.toArray(new String[0]),
               actionCount.get());
-
-
-
         });
   }
 

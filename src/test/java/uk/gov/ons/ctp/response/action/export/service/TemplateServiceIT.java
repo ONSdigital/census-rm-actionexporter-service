@@ -22,11 +22,9 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import javax.xml.bind.JAXBException;
 
-import net.logstash.logback.encoder.org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -96,7 +96,7 @@ public class TemplateServiceIT {
     simpleMessageSender.sendMessage(
         "action-outbound-exchange",
         "Action.Printer.binding",
-        createActionInstrunctionPayload(ICL1E));
+        createActionInstructionPayload(ICL1E));
 
     // When
     String message = queue.take();
@@ -276,7 +276,7 @@ public class TemplateServiceIT {
     return actionInstruction;
   }
 
-  private String createActionInstrunctionPayload(String actionType) throws JAXBException {
+  private String createActionInstructionPayload(String actionType) throws JAXBException {
     ActionRequest actionRequest = ActionRequestBuilder.createICL_EnglandActionRequest(actionType);
     ActionInstruction actionInstruction = new ActionInstruction();
     actionInstruction.setActionRequest(actionRequest);

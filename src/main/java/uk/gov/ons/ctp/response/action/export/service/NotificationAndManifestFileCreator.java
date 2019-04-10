@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.springframework.stereotype.Service;
 import uk.gov.ons.ctp.response.action.export.domain.ExportFile;
 import uk.gov.ons.ctp.response.action.export.domain.ExportJob;
@@ -32,18 +33,19 @@ public class NotificationAndManifestFileCreator {
   private final EventPublisher eventPublisher;
   private final ExportFileRepository exportFileRepository;
   private final Clock clock;
-  private final ObjectMapper objectMapper;
+  private final ManifestBuilder manifestBuilder;
 
   public NotificationAndManifestFileCreator(
       SftpServicePublisher sftpService,
       EventPublisher eventPublisher,
       ExportFileRepository exportFileRepository,
-      Clock clock) {
+      Clock clock,
+      ManifestBuilder manifestBuilder) {
     this.sftpService = sftpService;
     this.eventPublisher = eventPublisher;
     this.exportFileRepository = exportFileRepository;
     this.clock = clock;
-    objectMapper = new ObjectMapper();
+    this.manifestBuilder = manifestBuilder;
   }
 
   public void uploadData(
@@ -52,6 +54,7 @@ public class NotificationAndManifestFileCreator {
       ExportJob exportJob,
       String[] responseRequiredList,
       int actionCount) {
+
     if (actionCount == 0) {
       return;
     }
@@ -60,10 +63,11 @@ public class NotificationAndManifestFileCreator {
     String csvfilename = String.format("%s_%s.csv", filenamePrefix, now);
     writeFileToSftpAndRecordOnDB(csvfilename, exportJob, data, responseRequiredList, actionCount);
 
-    ByteArrayOutputStream manifestData = createManifestData(csvfilename, data);
-    String manifestFileName = getManifestFileName(csvfilename);
     writeFileToSftpAndRecordOnDB(
-        manifestFileName, exportJob, manifestData, responseRequiredList, actionCount);
+       manifestBuilder.getManifestFileName(csvfilename),
+            exportJob,
+            manifestBuilder.createManifestData(csvfilename, data),
+            new String [0], 1);
   }
 
   private void writeFileToSftpAndRecordOnDB(
@@ -88,46 +92,5 @@ public class NotificationAndManifestFileCreator {
 
     sftpService.sendMessage(filename, responseRequiredList, Integer.toString(actionCount), data);
     eventPublisher.publishEvent("Printed file " + filename);
-  }
-
-  private ByteArrayOutputStream createManifestData(String filename, ByteArrayOutputStream data) {
-    PrintFileMainfest printFileMainfest = createManifest(filename, data);
-
-    try {
-      String jsonManifest = objectMapper.writeValueAsString(printFileMainfest);
-      byte[] manifestBytes = jsonManifest.getBytes();
-      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(manifestBytes.length);
-      byteArrayOutputStream.write(manifestBytes);
-
-      return byteArrayOutputStream;
-    } catch (IOException e) {
-      e.printStackTrace();
-      System.out.println("Must handle this, throwing up equals pain.");
-      throw new RuntimeException(e.getMessage());
-    }
-  }
-
-  private String getManifestFileName(String mainFileName) {
-    // Should be nicer, check endswith.
-    return mainFileName.replace(".csv", ".manifest");
-  }
-
-  private PrintFileMainfest createManifest(String filename, ByteArrayOutputStream data) {
-    String checksum = DigestUtils.md5Hex(data.toByteArray());
-
-    PrintFilesInfo printFilesInfo = new PrintFilesInfo(data.size(), checksum, "./", filename);
-    List<PrintFilesInfo> files = new ArrayList<>(Arrays.asList(printFilesInfo));
-
-    String manifestCreatedDateTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
-
-    // These can be hardcoded for now
-    return new PrintFileMainfest(
-        1,
-        files,
-        "ONS_RM",
-        manifestCreatedDateTime,
-        "Initial contact letter households - England",
-        "PPD1.1",
-        1);
   }
 }

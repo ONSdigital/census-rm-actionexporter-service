@@ -201,7 +201,7 @@ public class TemplateServiceIT {
     long bytesLength = fileLines.getBytes().length;
     String filename = FilenameUtils.getName(filePath);
     String checksum = DigestUtils.md5Hex(fileLines);
-    PrintFilesInfo printFilesInfo = new PrintFilesInfo(bytesLength, checksum, "./", filename);
+    PrintFilesInfo printFilesInfo = new PrintFilesInfo(bytesLength, checksum, ".\\", filename);
 
     List<PrintFilesInfo> files = new ArrayList<>(Arrays.asList(printFilesInfo));
 
@@ -298,7 +298,6 @@ public class TemplateServiceIT {
               } catch (IOException e) {
                 System.out.println("Non Fatal Error, Failed to delete file: " + filetoDeletePath);
               }
-            })
-        .toArray();
+            }).count();
   }
 }

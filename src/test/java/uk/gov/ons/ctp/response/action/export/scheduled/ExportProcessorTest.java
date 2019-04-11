@@ -89,11 +89,7 @@ public class ExportProcessorTest {
     String[] responsesRequired = {ari.getActionId().toString()};
     verify(notificationFileCreator)
         .uploadData(
-            eq("FILENAMEPREFIX_SURVEYREF_EXERCISEREF"),
-            bosCaptor.capture(),
-            eq(exportJob),
-            eq(responsesRequired),
-            eq(1));
+            eq("FILENAMEPREFIX"), bosCaptor.capture(), eq(exportJob), eq(responsesRequired), eq(1));
     assertThat(bosCaptor.getValue().toByteArray()).isEqualTo(bos.toByteArray());
   }
 }

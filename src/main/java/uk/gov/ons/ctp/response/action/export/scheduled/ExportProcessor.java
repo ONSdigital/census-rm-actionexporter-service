@@ -50,7 +50,6 @@ public class ExportProcessor {
     this.exportJobRepository = exportJobRepository;
   }
 
-  @Transactional
   public void processExport() {
     if (!actionRequestRepository.existsByExportJobIdIsNull()) {
       return;

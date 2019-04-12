@@ -3,6 +3,7 @@ package uk.gov.ons.ctp.response.action.export.scheduled;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import java.util.concurrent.TimeUnit;
+import org.springframework.transaction.annotation.Transactional;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,6 +32,7 @@ public class ExportScheduler {
 
   /** Carry out scheduled actions according to configured cron expression */
   @Scheduled(cron = "#{appConfig.exportSchedule.cronExpression}")
+  @Transactional
   public void scheduleExport() {
     log.debug("Scheduled run start");
     try {

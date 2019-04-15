@@ -59,7 +59,7 @@ public class NotificationFileCreatorTest {
 
     // When
     notificationFileCreator.uploadData(
-        "TESTFILENAMEPREFIX", bos, exportJob, responseRequiredList, 666);
+        "DIRSUFFIX", "TESTFILENAMEPREFIX", bos, exportJob, responseRequiredList, 666);
 
     // Then
     String expectedFilename =
@@ -71,7 +71,11 @@ public class NotificationFileCreatorTest {
     assertThat(exportFileArgumentCaptor.getValue().getStatus()).isEqualTo(SendStatus.QUEUED);
     verify(sftpService)
         .sendMessage(
-            eq(directory), eq(expectedFilename), eq(responseRequiredList), eq("666"), eq(bos));
+            eq(directory.concat("DIRSUFFIX/")),
+            eq(expectedFilename),
+            eq(responseRequiredList),
+            eq("666"),
+            eq(bos));
 
     verify(eventPublisher).publishEvent(eq("Printed file " + expectedFilename));
   }
@@ -91,7 +95,7 @@ public class NotificationFileCreatorTest {
     // When
     try {
       notificationFileCreator.uploadData(
-          "TESTFILENAMEPREFIX", bos, exportJob, responseRequiredList, 666);
+          "DIRSUFFIX", "TESTFILENAMEPREFIX", bos, exportJob, responseRequiredList, 666);
     } catch (RuntimeException ex) {
       expectedExceptionThrown = true;
     }

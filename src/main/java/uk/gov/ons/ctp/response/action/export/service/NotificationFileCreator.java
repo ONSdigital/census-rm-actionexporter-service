@@ -45,6 +45,7 @@ public class NotificationFileCreator {
   }
 
   public void uploadData(
+      String directorySuffix,
       String filenamePrefix,
       ByteArrayOutputStream data,
       ExportJob exportJob,
@@ -72,6 +73,9 @@ public class NotificationFileCreator {
     exportFile.setFilename(filename);
     exportFileRepository.saveAndFlush(exportFile);
     String directory = appConfig.getSftp().getDirectory();
+    if (directorySuffix != null) {
+      directory = directory.concat(directorySuffix).concat("/");
+    }
     sftpService.sendMessage(
         directory, filename, responseRequiredList, Integer.toString(actionCount), data);
 

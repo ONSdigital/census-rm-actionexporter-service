@@ -57,4 +57,8 @@ public class TemplateMappingService {
         .stream()
         .collect(Collectors.groupingBy(TemplateMapping::getFileNamePrefix));
   }
+
+  public TemplateMapping retieveTemplateMappingByFilePrefx(String prefix) {
+    return repository.findByFileNamePrefix(prefix);
+  }
 }

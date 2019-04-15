@@ -55,6 +55,7 @@ public class ExportProcessorTest {
     TemplateMapping templateMapping = new TemplateMapping();
     templateMapping.setTemplate("TEMPLATENAME");
     templateMapping.setActionType(actionType);
+    templateMapping.setDirectoryName("DIRSUFFIX");
 
     Map<String, List<TemplateMapping>> fileNameTemplateMappings = new HashMap<>();
     fileNameTemplateMappings.put("FILENAMEPREFIX", Collections.singletonList(templateMapping));
@@ -71,6 +72,8 @@ public class ExportProcessorTest {
     given(templateMappingService.retrieveAllTemplateMappingsByFilename())
         .willReturn(fileNameTemplateMappings);
     given(templateService.stream(any(), any())).willReturn(bos);
+    given(templateMappingService.retieveTemplateMappingByFilePrefx(any()))
+        .willReturn(templateMapping);
 
     // When
     exportProcessor.processExport();
@@ -89,7 +92,12 @@ public class ExportProcessorTest {
     String[] responsesRequired = {ari.getActionId().toString()};
     verify(notificationFileCreator)
         .uploadData(
-            eq("FILENAMEPREFIX"), bosCaptor.capture(), eq(exportJob), eq(responsesRequired), eq(1));
+            eq("DIRSUFFIX"),
+            eq("FILENAMEPREFIX"),
+            bosCaptor.capture(),
+            eq(exportJob),
+            eq(responsesRequired),
+            eq(1));
     assertThat(bosCaptor.getValue().toByteArray()).isEqualTo(bos.toByteArray());
   }
 }

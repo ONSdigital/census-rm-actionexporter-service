@@ -29,7 +29,7 @@
                                        session-factory="sftpSessionFactory"
                                        channel="sftpOutbound"
                                        remote-filename-generator-expression="headers[#{T(org.springframework.integration.file.FileHeaders).REMOTE_FILE}]"
-                                       remote-directory="${sftp.directory}">
+                                       remote-directory-expression="headers[#{T(org.springframework.integration.file.FileHeaders).REMOTE_DIRECTORY}]">
         <int-sftp:request-handler-advice-chain>
             <bean class="org.springframework.integration.handler.advice.ExpressionEvaluatingRequestHandlerAdvice">
                 <property name="onSuccessExpression" value="#root" />

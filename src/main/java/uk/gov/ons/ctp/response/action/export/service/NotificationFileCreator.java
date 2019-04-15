@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.time.Clock;
 import org.springframework.stereotype.Service;
+import uk.gov.ons.ctp.response.action.export.config.AppConfig;
 import uk.gov.ons.ctp.response.action.export.domain.ExportFile;
 import uk.gov.ons.ctp.response.action.export.domain.ExportJob;
 import uk.gov.ons.ctp.response.action.export.message.EventPublisher;
@@ -28,15 +29,19 @@ public class NotificationFileCreator {
 
   private final Clock clock;
 
+  private final AppConfig appConfig;
+
   public NotificationFileCreator(
       SftpServicePublisher sftpService,
       EventPublisher eventPublisher,
       ExportFileRepository exportFileRepository,
-      Clock clock) {
+      Clock clock,
+      AppConfig appConfig) {
     this.sftpService = sftpService;
     this.eventPublisher = eventPublisher;
     this.exportFileRepository = exportFileRepository;
     this.clock = clock;
+    this.appConfig = appConfig;
   }
 
   public void uploadData(
@@ -66,8 +71,9 @@ public class NotificationFileCreator {
     exportFile.setExportJobId(exportJob.getId());
     exportFile.setFilename(filename);
     exportFileRepository.saveAndFlush(exportFile);
-
-    sftpService.sendMessage(filename, responseRequiredList, Integer.toString(actionCount), data);
+    String directory = appConfig.getSftp().getDirectory();
+    sftpService.sendMessage(
+        directory, filename, responseRequiredList, Integer.toString(actionCount), data);
 
     eventPublisher.publishEvent("Printed file " + filename);
   }

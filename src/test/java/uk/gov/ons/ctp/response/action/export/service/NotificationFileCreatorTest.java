@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -18,6 +19,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.ons.ctp.response.action.export.config.AppConfig;
+import uk.gov.ons.ctp.response.action.export.config.Sftp;
 import uk.gov.ons.ctp.response.action.export.domain.ExportFile;
 import uk.gov.ons.ctp.response.action.export.domain.ExportFile.SendStatus;
 import uk.gov.ons.ctp.response.action.export.domain.ExportJob;
@@ -37,6 +40,7 @@ public class NotificationFileCreatorTest {
   @Mock private SftpServicePublisher sftpService;
   @Mock private EventPublisher eventPublisher;
   @Mock private ExportFileRepository exportFileRepository;
+  @Mock private AppConfig appConfig;
   @InjectMocks private NotificationFileCreator notificationFileCreator;
 
   @Test
@@ -45,9 +49,13 @@ public class NotificationFileCreatorTest {
     ExportJob exportJob = new ExportJob(UUID.randomUUID());
     String[] responseRequiredList = {"123", "ABC", "FOO", "BAR"};
     Date now = new Date();
+    Sftp mockSftp = mock(Sftp.class);
+    String directory = "Documents/sftp/";
 
     // Given
     given(clock.millis()).willReturn(now.getTime());
+    given(appConfig.getSftp()).willReturn(mockSftp);
+    given(mockSftp.getDirectory()).willReturn(directory);
 
     // When
     notificationFileCreator.uploadData(
@@ -61,9 +69,9 @@ public class NotificationFileCreatorTest {
     assertThat(exportFileArgumentCaptor.getValue().getFilename()).isEqualTo(expectedFilename);
     assertThat(exportFileArgumentCaptor.getValue().getExportJobId()).isEqualTo(exportJob.getId());
     assertThat(exportFileArgumentCaptor.getValue().getStatus()).isEqualTo(SendStatus.QUEUED);
-
     verify(sftpService)
-        .sendMessage(eq(expectedFilename), eq(responseRequiredList), eq("666"), eq(bos));
+        .sendMessage(
+            eq(directory), eq(expectedFilename), eq(responseRequiredList), eq("666"), eq(bos));
 
     verify(eventPublisher).publishEvent(eq("Printed file " + expectedFilename));
   }
@@ -91,7 +99,7 @@ public class NotificationFileCreatorTest {
     // Then
     assertThat(expectedExceptionThrown).isTrue();
     verify(exportFileRepository, never()).saveAndFlush(any());
-    verify(sftpService, never()).sendMessage(any(), any(), any(), any());
+    verify(sftpService, never()).sendMessage(any(), any(), any(), any(), any());
     verify(eventPublisher, never()).publishEvent(any());
   }
 }

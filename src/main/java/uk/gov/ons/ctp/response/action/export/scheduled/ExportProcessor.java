@@ -86,10 +86,8 @@ public class ExportProcessor {
             List<TemplateMapping> templateMappings = fileNameTemplateMappings.get(filename);
             for (TemplateMapping templateMapping : templateMappings) {
               if (templateMapping.getActionType().equals(ari.getActionType())) {
-                String filenamePrefix = filename;
-                String directory = templateMapping.getRequestType();
                 Map<String, List<ActionRequestInstruction>> templateNameMap =
-                    filenamePrefixToDataMap.computeIfAbsent(filenamePrefix, key -> new HashMap<>());
+                    filenamePrefixToDataMap.computeIfAbsent(filename, key -> new HashMap<>());
 
                 List<ActionRequestInstruction> ariSubset =
                     templateNameMap.computeIfAbsent(

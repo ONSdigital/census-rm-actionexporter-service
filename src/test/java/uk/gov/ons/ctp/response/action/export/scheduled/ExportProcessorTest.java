@@ -55,7 +55,7 @@ public class ExportProcessorTest {
     TemplateMapping templateMapping = new TemplateMapping();
     templateMapping.setTemplate("TEMPLATENAME");
     templateMapping.setActionType(actionType);
-    templateMapping.setDirectoryName("DIRSUFFIX");
+    templateMapping.setRequestType("REQUESTTYPE");
 
     Map<String, List<TemplateMapping>> fileNameTemplateMappings = new HashMap<>();
     fileNameTemplateMappings.put("FILENAMEPREFIX", Collections.singletonList(templateMapping));
@@ -92,7 +92,7 @@ public class ExportProcessorTest {
     String[] responsesRequired = {ari.getActionId().toString()};
     verify(notificationFileCreator)
         .uploadData(
-            eq("DIRSUFFIX"),
+            eq("REQUESTTYPE"),
             eq("FILENAMEPREFIX"),
             bosCaptor.capture(),
             eq(exportJob),

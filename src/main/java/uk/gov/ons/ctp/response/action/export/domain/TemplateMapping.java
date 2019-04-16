@@ -33,6 +33,6 @@ public class TemplateMapping {
   @Column(name = "datemodified")
   private Date dateModified;
 
-  @Column(name = "directoryname")
-  private String directoryName;
+  @Column(name = "requesttype")
+  private String requestType;
 }

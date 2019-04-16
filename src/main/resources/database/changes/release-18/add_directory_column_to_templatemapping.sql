@@ -1,1 +1,1 @@
-ALTER TABLE actionexporter.templatemapping ADD COLUMN directoryname varchar(60);
+ALTER TABLE actionexporter.templatemapping ADD COLUMN requesttype varchar(60);

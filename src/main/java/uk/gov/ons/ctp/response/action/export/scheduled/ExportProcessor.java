@@ -87,7 +87,7 @@ public class ExportProcessor {
             for (TemplateMapping templateMapping : templateMappings) {
               if (templateMapping.getActionType().equals(ari.getActionType())) {
                 String filenamePrefix = filename;
-                String directory = templateMapping.getDirectoryName();
+                String directory = templateMapping.getRequestType();
                 Map<String, List<ActionRequestInstruction>> templateNameMap =
                     filenamePrefixToDataMap.computeIfAbsent(filenamePrefix, key -> new HashMap<>());
 
@@ -112,7 +112,7 @@ public class ExportProcessor {
         (filenamePrefix, data) -> {
           TemplateMapping tm =
               templateMappingService.retieveTemplateMappingByFilePrefx(filenamePrefix);
-          String directorySuffix = tm.getDirectoryName();
+          String directorySuffix = tm.getRequestType();
           List<ByteArrayOutputStream> streamList = new LinkedList<>();
           Set<String> responseRequiredList = new HashSet<>();
           AtomicInteger actionCount = new AtomicInteger(0);

@@ -110,7 +110,7 @@ public class ExportProcessor {
         (filenamePrefix, data) -> {
           TemplateMapping tm =
               templateMappingService.retieveTemplateMappingByFilePrefx(filenamePrefix);
-          String directorySuffix = tm.getRequestType();
+          String requestType = tm.getRequestType();
           List<ByteArrayOutputStream> streamList = new LinkedList<>();
           Set<String> responseRequiredList = new HashSet<>();
           AtomicInteger actionCount = new AtomicInteger(0);
@@ -129,7 +129,7 @@ public class ExportProcessor {
               });
 
           notificationFileCreator.uploadData(
-              directorySuffix,
+              requestType,
               filenamePrefix,
               getMergedStreams(streamList),
               exportJob,

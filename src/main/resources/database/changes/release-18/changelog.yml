@@ -10,3 +10,13 @@ databaseChangeLog:
             relativeToChangelogFile: true
             splitStatements: false
 
+  - changeSet:
+      id: 18-2
+      author: Richard Weeks
+      changes:
+        - sqlFile:
+            comment: Add request type value
+            path: insert_requesttype_into_templatemapping.sql
+            relativeToChangeLogFile: true
+            splitStatements: false
+

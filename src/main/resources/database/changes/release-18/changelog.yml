@@ -17,6 +17,6 @@ databaseChangeLog:
         - sqlFile:
             comment: Add request type value
             path: insert_requesttype_into_templatemapping.sql
-            relativeToChangeLogFile: true
+            relativeToChangelogFile: true
             splitStatements: false
 

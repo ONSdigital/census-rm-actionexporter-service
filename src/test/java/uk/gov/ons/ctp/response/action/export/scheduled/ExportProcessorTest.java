@@ -24,7 +24,7 @@ import uk.gov.ons.ctp.response.action.export.domain.ExportJob;
 import uk.gov.ons.ctp.response.action.export.domain.TemplateMapping;
 import uk.gov.ons.ctp.response.action.export.repository.ActionRequestRepository;
 import uk.gov.ons.ctp.response.action.export.repository.ExportJobRepository;
-import uk.gov.ons.ctp.response.action.export.service.NotificationFileCreator;
+import uk.gov.ons.ctp.response.action.export.service.NotificationAndManifestFileCreator;
 import uk.gov.ons.ctp.response.action.export.service.TemplateMappingService;
 import uk.gov.ons.ctp.response.action.export.service.TemplateService;
 
@@ -34,7 +34,7 @@ public class ExportProcessorTest {
 
   @Mock private TemplateMappingService templateMappingService;
   @Mock private ActionRequestRepository actionRequestRepository;
-  @Mock private NotificationFileCreator notificationFileCreator;
+  @Mock private NotificationAndManifestFileCreator notificationAndManifestFileCreator;
   @Mock private ExportJobRepository exportJobRepository;
   @Mock private TemplateService templateService;
 
@@ -90,7 +90,7 @@ public class ExportProcessorTest {
     ArgumentCaptor<ByteArrayOutputStream> bosCaptor =
         ArgumentCaptor.forClass(ByteArrayOutputStream.class);
     String[] responsesRequired = {ari.getActionId().toString()};
-    verify(notificationFileCreator)
+    verify(notificationAndManifestFileCreator)
         .uploadData(
             eq("REQUESTTYPE"),
             eq("FILENAMEPREFIX"),

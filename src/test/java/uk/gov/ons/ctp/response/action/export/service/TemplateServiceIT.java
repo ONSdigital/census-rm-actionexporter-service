@@ -42,6 +42,7 @@ public class TemplateServiceIT {
   private static final Logger log = LoggerFactory.getLogger(TemplateServiceIT.class);
   public static final String ICL1E = "ICL1E";
   public static final String P_IC_ICL_1 = "P_IC_ICL1";
+  public static final String FULFILLMENT = "fulfillment";
 
   @Autowired private AppConfig appConfig;
 
@@ -156,7 +157,7 @@ public class TemplateServiceIT {
     Comparator<ChannelSftp.LsEntry> sortByModifiedTimeDescending =
         (f1, f2) -> Integer.compare(f2.getAttrs().getMTime(), f1.getAttrs().getMTime());
 
-    String sftpPath = "Documents/sftp/";
+    String sftpPath = "Documents/sftp/fulfillment/";
     ChannelSftp.LsEntry[] sftpList = defaultSftpSessionFactory.getSession().list(sftpPath);
 
     System.out.println("Latest File Length list: " + sftpList.length);

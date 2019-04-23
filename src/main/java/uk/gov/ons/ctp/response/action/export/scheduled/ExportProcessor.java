@@ -86,15 +86,8 @@ public class ExportProcessor {
             List<TemplateMapping> templateMappings = fileNameTemplateMappings.get(filename);
             for (TemplateMapping templateMapping : templateMappings) {
               if (templateMapping.getActionType().equals(ari.getActionType())) {
-                String filenamePrefix =
-                    filename
-                        + "_"
-                        + ari.getSurveyRef()
-                        + "_"
-                        + getExerciseRefWithoutSurveyRef(ari.getExerciseRef());
-
                 Map<String, List<ActionRequestInstruction>> templateNameMap =
-                    filenamePrefixToDataMap.computeIfAbsent(filenamePrefix, key -> new HashMap<>());
+                    filenamePrefixToDataMap.computeIfAbsent(filename, key -> new HashMap<>());
 
                 List<ActionRequestInstruction> ariSubset =
                     templateNameMap.computeIfAbsent(
@@ -115,6 +108,9 @@ public class ExportProcessor {
 
     filenamePrefixToDataMap.forEach(
         (filenamePrefix, data) -> {
+          TemplateMapping tm =
+              templateMappingService.retieveTemplateMappingByFilePrefx(filenamePrefix);
+          String requestType = tm.getRequestType();
           List<ByteArrayOutputStream> streamList = new LinkedList<>();
           Set<String> responseRequiredList = new HashSet<>();
           AtomicInteger actionCount = new AtomicInteger(0);
@@ -133,6 +129,7 @@ public class ExportProcessor {
               });
 
           notificationFileCreator.uploadData(
+              requestType,
               filenamePrefix,
               getMergedStreams(streamList),
               exportJob,

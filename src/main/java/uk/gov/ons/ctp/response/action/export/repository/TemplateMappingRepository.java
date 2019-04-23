@@ -6,4 +6,7 @@ import uk.gov.ons.ctp.response.action.export.domain.TemplateMapping;
 
 /** JPA repository for TemplateMapping entities */
 @Repository
-public interface TemplateMappingRepository extends JpaRepository<TemplateMapping, String> {}
+public interface TemplateMappingRepository extends JpaRepository<TemplateMapping, String> {
+
+  TemplateMapping findByFileNamePrefix(String prefix);
+}

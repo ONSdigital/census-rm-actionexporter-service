@@ -1,0 +1,22 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 18-1
+      author: Richard Weeks
+      changes:
+        - sqlFile:
+            comment: Add directory name column to templatemapping
+            path: add_directory_column_to_templatemapping.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+
+  - changeSet:
+      id: 18-2
+      author: Richard Weeks
+      changes:
+        - sqlFile:
+            comment: Add request type value
+            path: insert_requesttype_into_templatemapping.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+

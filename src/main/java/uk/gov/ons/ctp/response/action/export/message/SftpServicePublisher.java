@@ -46,6 +46,7 @@ public class SftpServicePublisher {
 
   @Publisher(channel = "sftpOutbound")
   public byte[] sendMessage(
+      @Header(FileHeaders.REMOTE_DIRECTORY) String path,
       @Header(FileHeaders.REMOTE_FILE) String filename,
       @Header(RESPONSES_REQUIRED) String[] responseRequiredList,
       @Header(ACTION_COUNT) String actionCount,

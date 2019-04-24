@@ -1,6 +1,6 @@
 INSERT INTO actionexporter.template
 (templatenamepk, content, datemodified)
-VALUES ('icl1e',
+VALUES ('icl2e',
 '<#list actionRequests as actionRequest>' ||
 '${(actionRequest.iac?trim)!}|' ||
 '${(actionRequest.caseRef?trim)!}|' ||

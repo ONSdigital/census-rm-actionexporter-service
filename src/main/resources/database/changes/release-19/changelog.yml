@@ -6,7 +6,7 @@ databaseChangeLog:
       changes:
         - sqlFile:
             comment: Increase length of sample unit ref columns
-            path: add_icl_england_template.sql
+            path: add_icl_wales_template.sql
             relativeToChangelogFile: true
             splitStatements: false
 

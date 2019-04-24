@@ -98,7 +98,6 @@ public class NotificationAndManifestFileCreator {
     eventPublisher.publishEvent("Printed file " + filename);
   }
 
-
   private String getDirectory(String directorySuffix) {
     String directory = appConfig.getSftp().getDirectory();
     if (directorySuffix != null) {
@@ -111,11 +110,11 @@ public class NotificationAndManifestFileCreator {
   // Fudge for transactional management of rolling back SI's immediate sftp file commit
   private void checkForDuplicates(String csvFilename, String manifestFilename) {
     if (exportFileRepository.existsByFilename(csvFilename)
-            || exportFileRepository.existsByFilename(manifestFilename)) {
+        || exportFileRepository.existsByFilename(manifestFilename)) {
       log.with("filename", csvFilename)
-              .warn(
-                      "Duplicate filename. The cron job is probably running too frequently. The "
-                              + "Action Exporter service is designed to only run every minute, maximum");
+          .warn(
+              "Duplicate filename. The cron job is probably running too frequently. The "
+                  + "Action Exporter service is designed to only run every minute, maximum");
       throw new RuntimeException();
     }
   }

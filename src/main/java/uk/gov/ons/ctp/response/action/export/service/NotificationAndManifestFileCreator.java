@@ -55,28 +55,17 @@ public class NotificationAndManifestFileCreator {
       ExportJob exportJob,
       String[] responseRequiredList,
       int actionCount) {
+
     if (actionCount == 0) {
       return;
     }
 
-    final String now = FILENAME_DATE_FORMAT.format(clock.millis());
+    String now = FILENAME_DATE_FORMAT.format(clock.millis());
     String csvFilename = String.format("%s_%s.csv", filenamePrefix, now);
     String manifestFilename = csvFilename.replace(".csv", ".manifest");
 
-    // Fudge for transactional management of rolling back SI's immediate sftp file commit
-    if (exportFileRepository.existsByFilename(csvFilename)
-        || exportFileRepository.existsByFilename(manifestFilename)) {
-      log.with("filename", csvFilename)
-          .warn(
-              "Duplicate filename. The cron job is probably running too frequently. The "
-                  + "Action Exporter service is designed to only run every minute, maximum");
-      throw new RuntimeException();
-    }
-
-    String directory = appConfig.getSftp().getDirectory();
-    if (directorySuffix != null) {
-      directory = directory.concat(directorySuffix).concat("/");
-    }
+    checkForDuplicates(csvFilename, manifestFilename);
+    String directory = getDirectory(directorySuffix);
 
     writeFileToSftpAndRecordOnDB(
         directory, csvFilename, exportJob, data, responseRequiredList, actionCount);
@@ -107,5 +96,27 @@ public class NotificationAndManifestFileCreator {
     sftpService.sendMessage(
         directory, filename, responseRequiredList, Integer.toString(actionCount), data);
     eventPublisher.publishEvent("Printed file " + filename);
+  }
+
+
+  private String getDirectory(String directorySuffix) {
+    String directory = appConfig.getSftp().getDirectory();
+    if (directorySuffix != null) {
+      directory = directory.concat(directorySuffix).concat("/");
+    }
+
+    return directory;
+  }
+
+  // Fudge for transactional management of rolling back SI's immediate sftp file commit
+  private void checkForDuplicates(String csvFilename, String manifestFilename) {
+    if (exportFileRepository.existsByFilename(csvFilename)
+            || exportFileRepository.existsByFilename(manifestFilename)) {
+      log.with("filename", csvFilename)
+              .warn(
+                      "Duplicate filename. The cron job is probably running too frequently. The "
+                              + "Action Exporter service is designed to only run every minute, maximum");
+      throw new RuntimeException();
+    }
   }
 }

@@ -15,7 +15,7 @@ now());
 
 
 INSERT INTO actionexporter.templatemapping
-(actiontypenamepk, templatenamefk, filenameprefix, datemodified)
+(actiontypenamepk, templatenamefk, filenameprefix, datemodified, requesttype)
 VALUES
-('ICL2E','icl2e', 'P_IC_ICL2', now());
+('ICL2E','icl2e', 'P_IC_ICL2', now(), 'print_service');
 

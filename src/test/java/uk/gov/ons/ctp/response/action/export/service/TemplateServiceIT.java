@@ -47,6 +47,8 @@ public class TemplateServiceIT {
   private static final Logger log = LoggerFactory.getLogger(TemplateServiceIT.class);
   private static final String ICL1E = "ICL1E";
   private static final String DOCUMENTS_SFTP = "Documents/sftp/fulfillment/";
+  private static final int SFTP_FILE_RETRY_ATTEMPTS = 24;
+  private static final int SFTP_FILE_SLEEP_SECONDS = 5;
 
   @Autowired private AppConfig appConfig;
   @Autowired private ObjectMapper objectMapper;
@@ -261,11 +263,19 @@ public class TemplateServiceIT {
   private boolean waitForSftpServerFileCount(int expectedFileCount)
       throws IOException, InterruptedException {
 
+    int sleepDuration = SFTP_FILE_SLEEP_SECONDS * 1000;
+
     log.with("Expected File Count", expectedFileCount)
-        .with("checking every 5 seconds for 2 minutes")
+        .with("Maximum attempts", SFTP_FILE_RETRY_ATTEMPTS)
         .debug("Checking for SFTP file(s)");
 
-    for (int i = 0; i < 24; i++) {
+    // Check every 5 secs upto 2 mins
+    for (int i = 0; i < SFTP_FILE_RETRY_ATTEMPTS; i++) {
+
+      log.with("attempt", i + 1).debug("Retrying...");
+
+      Thread.sleep(sleepDuration);
+
       long fileCount =
           Arrays.stream(defaultSftpSessionFactory.getSession().list(DOCUMENTS_SFTP))
               .filter(
@@ -275,9 +285,6 @@ public class TemplateServiceIT {
       if (fileCount == expectedFileCount) {
         return true;
       }
-
-      log.with("attempt", i + 1).debug("Retrying...");
-      Thread.sleep(5000);
     }
 
     return false;

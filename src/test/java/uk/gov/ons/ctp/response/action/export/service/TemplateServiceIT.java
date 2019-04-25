@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +52,6 @@ public class TemplateServiceIT {
   private static final int SFTP_FILE_SLEEP_SECONDS = 5;
 
   @Autowired private AppConfig appConfig;
-  @Autowired private ObjectMapper objectMapper;
 
   @Autowired private DefaultSftpSessionFactory defaultSftpSessionFactory;
 
@@ -216,7 +216,7 @@ public class TemplateServiceIT {
 
     PrintFilesInfo printFilesInfo = new PrintFilesInfo(printFileSize, checksum, ".\\", filename);
 
-    List<PrintFilesInfo> files = Arrays.asList(printFilesInfo);
+    List<PrintFilesInfo> files = Collections.singletonList(printFilesInfo);
 
     String manifestCreatedDateTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
 
@@ -274,8 +274,6 @@ public class TemplateServiceIT {
 
       log.with("attempt", i + 1).debug("Retrying...");
 
-      Thread.sleep(sleepDuration);
-
       long fileCount =
           Arrays.stream(defaultSftpSessionFactory.getSession().list(DOCUMENTS_SFTP))
               .filter(
@@ -285,6 +283,8 @@ public class TemplateServiceIT {
       if (fileCount == expectedFileCount) {
         return true;
       }
+
+      Thread.sleep(sleepDuration);
     }
 
     return false;

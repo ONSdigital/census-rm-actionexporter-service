@@ -3,6 +3,7 @@ package uk.gov.ons.ctp.response.action.export.service;
 import com.godaddy.logging.Logger;
 import com.godaddy.logging.LoggerFactory;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Clock;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,10 @@ public class NotificationAndManifestFileCreator {
 
   private static final SimpleDateFormat FILENAME_DATE_FORMAT =
       new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss");
+
+  private static final String CSV_FILE_EXTENSION = "csv";
+  private static final String MANIFEST_FILE_EXTENSION = "manifest";
+  private static final String SFTP_FILENAME_FORMAT = "%s_%s.%s";
 
   private final SftpServicePublisher sftpService;
 
@@ -54,15 +59,16 @@ public class NotificationAndManifestFileCreator {
       ByteArrayOutputStream data,
       ExportJob exportJob,
       String[] responseRequiredList,
-      int actionCount) {
+      int actionCount)
+      throws IOException {
 
     if (actionCount == 0) {
       return;
     }
 
     String now = FILENAME_DATE_FORMAT.format(clock.millis());
-    String csvFilename = String.format("%s_%s.csv", filenamePrefix, now);
-    String manifestFilename = csvFilename.replace(".csv", ".manifest");
+    String csvFilename = String.format(SFTP_FILENAME_FORMAT, filenamePrefix, now, CSV_FILE_EXTENSION);
+    String manifestFilename = String.format(SFTP_FILENAME_FORMAT, filenamePrefix, now, MANIFEST_FILE_EXTENSION);
 
     checkForDuplicates(csvFilename, manifestFilename);
     String directory = getDirectory(directorySuffix);
@@ -76,7 +82,7 @@ public class NotificationAndManifestFileCreator {
         exportJob,
         manifestBuilder.createManifestData(csvFilename, data),
         new String[0],
-        1);
+        actionCount);
   }
 
   private void writeFileToSftpAndRecordOnDB(
@@ -107,7 +113,6 @@ public class NotificationAndManifestFileCreator {
     return directory;
   }
 
-  // Fudge for transactional management of rolling back SI's immediate sftp file commit
   private void checkForDuplicates(String csvFilename, String manifestFilename) {
     if (exportFileRepository.existsByFilename(csvFilename)
         || exportFileRepository.existsByFilename(manifestFilename)) {

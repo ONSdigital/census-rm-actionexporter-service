@@ -231,11 +231,7 @@ public class TemplateServiceIT {
   }
 
   private String sftpFileToString(String filePath) throws IOException {
-    InputStream inputSteam = defaultSftpSessionFactory.getSession().readRaw(filePath);
-    // Does this need to be here?
-    defaultSftpSessionFactory.getSession();
-
-    return IOUtils.toString(inputSteam);
+    return IOUtils.toString(defaultSftpSessionFactory.getSession().readRaw(filePath));
   }
 
   private void removeAllCSVandManifestFiles() throws IOException {

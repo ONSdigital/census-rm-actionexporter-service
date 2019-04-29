@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,7 +48,7 @@ public class NotificationAndManifestFileCreatorTest {
   @InjectMocks private NotificationAndManifestFileCreator notificationAndManifestFileCreator;
 
   @Test
-  public void shouldCreateTheCorrectFilename() {
+  public void shouldCreateTheCorrectFilename() throws IOException {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     ByteArrayOutputStream manifestFileBos = new ByteArrayOutputStream();
     ExportJob exportJob = new ExportJob(UUID.randomUUID());
@@ -111,7 +112,7 @@ public class NotificationAndManifestFileCreatorTest {
   }
 
   @Test
-  public void shouldThrowExceptionForDuplicateFilename() {
+  public void shouldThrowExceptionForDuplicateFilename() throws IOException {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     ExportJob exportJob = new ExportJob(UUID.randomUUID());
     String[] responseRequiredList = {"123", "ABC", "FOO", "BAR"};

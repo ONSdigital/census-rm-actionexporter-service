@@ -21,21 +21,16 @@ public class ManifestBuilder {
     this.objectMapper = objectMapper;
   }
 
-  public ByteArrayOutputStream createManifestData(String filename, ByteArrayOutputStream data) {
+  public ByteArrayOutputStream createManifestData(String filename, ByteArrayOutputStream data)
+      throws IOException {
     PrintFileMainfest printFileMainfest = createManifest(filename, data);
 
-    try {
-      String jsonManifest = objectMapper.writeValueAsString(printFileMainfest);
-      byte[] manifestBytes = jsonManifest.getBytes();
-      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(manifestBytes.length);
-      byteArrayOutputStream.write(manifestBytes);
+    String jsonManifest = objectMapper.writeValueAsString(printFileMainfest);
+    byte[] manifestBytes = jsonManifest.getBytes();
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(manifestBytes.length);
+    byteArrayOutputStream.write(manifestBytes);
 
-      return byteArrayOutputStream;
-    } catch (IOException e) {
-      e.printStackTrace();
-      System.out.println("Must handle this, throwing up equals pain.");
-      throw new RuntimeException(e.getMessage());
-    }
+    return byteArrayOutputStream;
   }
 
   private PrintFileMainfest createManifest(String filename, ByteArrayOutputStream data) {

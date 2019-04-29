@@ -127,13 +127,17 @@ public class ExportProcessor {
                     });
               });
 
-          notificationAndManifestFileCreator.uploadData(
-              requestType,
-              filenamePrefix,
-              getMergedStreams(streamList),
-              exportJob,
-              responseRequiredList.toArray(new String[0]),
-              actionCount.get());
+          try {
+            notificationAndManifestFileCreator.uploadData(
+                requestType,
+                filenamePrefix,
+                getMergedStreams(streamList),
+                exportJob,
+                responseRequiredList.toArray(new String[0]),
+                actionCount.get());
+          } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+          }
         });
   }
 

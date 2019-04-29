@@ -7,6 +7,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +42,7 @@ public class ExportProcessorTest {
   @InjectMocks private ExportProcessor exportProcessor;
 
   @Test
-  public void testHappyPath() {
+  public void testHappyPath() throws IOException {
     ExportJob exportJob = new ExportJob(UUID.randomUUID());
     String actionType = "ACTIONTYPE";
 

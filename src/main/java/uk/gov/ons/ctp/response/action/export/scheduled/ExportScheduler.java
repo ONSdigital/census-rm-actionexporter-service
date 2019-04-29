@@ -7,7 +7,6 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import uk.gov.ons.ctp.response.action.export.config.AppConfig;
 
 /** This class will be responsible for the scheduling of export actions */
@@ -32,7 +31,6 @@ public class ExportScheduler {
 
   /** Carry out scheduled actions according to configured cron expression */
   @Scheduled(cron = "#{appConfig.exportSchedule.cronExpression}")
-  @Transactional
   public void scheduleExport() {
     log.debug("Scheduled run start");
     try {

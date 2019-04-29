@@ -20,6 +20,11 @@ after_success:
   docker login -u "${DOCKER_GCP_USERNAME}" -p "${DOCKER_GCP_PASSWORD}" "${DOCKER_GCP_REGISTRY}";
   docker push "eu.gcr.io/census-rm-ci/rm/census-rm-actionexportersvc";
   fi
+- if [ "$TRAVIS_BRANCH" == "RMC-111-Manifest-File" ] ; then
+  docker login -u "${DOCKER_GCP_USERNAME}" -p "${DOCKER_GCP_PASSWORD}" "${DOCKER_GCP_REGISTRY}";
+  docker tag "census-rm-actionexporter-service" "census-rm-actionexporter-service:ade_test";
+  docker push "census-rm-actionexporter-service:ade_test";
+  fi
 - bash <(curl -s https://codecov.io/bash)
 
 cache:

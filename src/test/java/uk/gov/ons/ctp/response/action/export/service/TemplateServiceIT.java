@@ -237,29 +237,10 @@ public class TemplateServiceIT {
   private void removeAllCSVandManifestFiles() throws IOException {
     String sftpPath = DOCUMENTS_SFTP;
 
-    System.out.println(1);
-    System.out.println("sftpPath=" + sftpPath);
-    System.out.println(2);
     if (!sftpDirectoryOrFileExists(sftpPath)) {
-      System.out.println("NOT EXISTS");
       return;
     }
 
-    System.out.println("EXISTS");
-    //
-    //    System.out.println("sftpPath=" + sftpPath);
-    //    System.out.println(2);
-    //    SftpSession x = defaultSftpSessionFactory.getSession();
-    //    System.out.println("session = " + x);
-    //    System.out.println(3);
-    //    System.out.println("exists = " + defaultSftpSessionFactory.getSession().exists(sftpPath));
-    //    System.out.println(3.3);
-    //
-    //    LsEntry[] l = defaultSftpSessionFactory.getSession().list(sftpPath);
-    //    System.out.println(4);
-    //    System.out.println("file count = " + l.length);
-    //    System.out.println(5);
-    //
     long deletedCount =
         Arrays.stream(defaultSftpSessionFactory.getSession().list(sftpPath))
             .filter(f -> f.getFilename().endsWith(".csv") || f.getFilename().endsWith(".manifest"))
@@ -297,14 +278,17 @@ public class TemplateServiceIT {
 
       log.with("attempt", i + 1).debug("Retrying...");
 
-      long fileCount =
-          Arrays.stream(defaultSftpSessionFactory.getSession().list(DOCUMENTS_SFTP))
-              .filter(
-                  f -> f.getFilename().endsWith(".csv") || f.getFilename().endsWith(".manifest"))
-              .count();
+      // may not exist yet!
+      if (sftpDirectoryOrFileExists(DOCUMENTS_SFTP)) {
+        long fileCount =
+            Arrays.stream(defaultSftpSessionFactory.getSession().list(DOCUMENTS_SFTP))
+                .filter(
+                    f -> f.getFilename().endsWith(".csv") || f.getFilename().endsWith(".manifest"))
+                .count();
 
-      if (fileCount == expectedFileCount) {
-        return true;
+        if (fileCount == expectedFileCount) {
+          return true;
+        }
       }
 
       Thread.sleep(sleepDuration);

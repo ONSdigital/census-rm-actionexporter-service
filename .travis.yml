@@ -34,3 +34,4 @@ cache:
 branches:
   only:
     - master
+    - RMC-111-Manifest-File

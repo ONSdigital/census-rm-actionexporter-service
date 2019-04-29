@@ -67,8 +67,10 @@ public class NotificationAndManifestFileCreator {
     }
 
     String now = FILENAME_DATE_FORMAT.format(clock.millis());
-    String csvFilename = String.format(SFTP_FILENAME_FORMAT, filenamePrefix, now, CSV_FILE_EXTENSION);
-    String manifestFilename = String.format(SFTP_FILENAME_FORMAT, filenamePrefix, now, MANIFEST_FILE_EXTENSION);
+    String csvFilename =
+        String.format(SFTP_FILENAME_FORMAT, filenamePrefix, now, CSV_FILE_EXTENSION);
+    String manifestFilename =
+        String.format(SFTP_FILENAME_FORMAT, filenamePrefix, now, MANIFEST_FILE_EXTENSION);
 
     checkForDuplicates(csvFilename, manifestFilename);
     String directory = getDirectory(directorySuffix);

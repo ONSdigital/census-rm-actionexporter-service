@@ -16,7 +16,7 @@ install: mvn install -DskipTests -DskipITs -Ddocker.skip -Ddockerfile.skip -Dmav
 script: mvn verify cobertura:cobertura-integration-test
 
 after_success:
-- if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+- if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] ; then
   docker login -u "${DOCKER_GCP_USERNAME}" -p "${DOCKER_GCP_PASSWORD}" "${DOCKER_GCP_REGISTRY}";
   docker push "eu.gcr.io/census-rm-ci/rm/census-rm-actionexportersvc";
   fi

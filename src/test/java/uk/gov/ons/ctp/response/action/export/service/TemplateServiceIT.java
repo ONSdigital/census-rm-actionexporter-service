@@ -237,6 +237,29 @@ public class TemplateServiceIT {
   private void removeAllCSVandManifestFiles() throws IOException {
     String sftpPath = DOCUMENTS_SFTP;
 
+    System.out.println(1);
+    System.out.println("sftpPath=" + sftpPath);
+    System.out.println(2);
+    if (!sftpDirectoryOrFileExists(sftpPath)) {
+      System.out.println("NOT EXISTS");
+      return;
+    }
+
+    System.out.println("EXISTS");
+    //
+    //    System.out.println("sftpPath=" + sftpPath);
+    //    System.out.println(2);
+    //    SftpSession x = defaultSftpSessionFactory.getSession();
+    //    System.out.println("session = " + x);
+    //    System.out.println(3);
+    //    System.out.println("exists = " + defaultSftpSessionFactory.getSession().exists(sftpPath));
+    //    System.out.println(3.3);
+    //
+    //    LsEntry[] l = defaultSftpSessionFactory.getSession().list(sftpPath);
+    //    System.out.println(4);
+    //    System.out.println("file count = " + l.length);
+    //    System.out.println(5);
+    //
     long deletedCount =
         Arrays.stream(defaultSftpSessionFactory.getSession().list(sftpPath))
             .filter(f -> f.getFilename().endsWith(".csv") || f.getFilename().endsWith(".manifest"))
@@ -254,6 +277,10 @@ public class TemplateServiceIT {
             .count();
 
     log.info("Deleted: " + deletedCount + " files");
+  }
+
+  private boolean sftpDirectoryOrFileExists(String sftpPath) {
+    return defaultSftpSessionFactory.getSession().exists(sftpPath);
   }
 
   private boolean waitForSftpServerFileCount(int expectedFileCount)

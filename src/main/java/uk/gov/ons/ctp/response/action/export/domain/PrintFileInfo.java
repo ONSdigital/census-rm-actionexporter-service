@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PrintFilesInfo {
+public class PrintFileInfo {
   private long sizeBytes;
   private String md5sum;
   private String relativePath;

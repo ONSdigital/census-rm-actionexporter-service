@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Component;
+import uk.gov.ons.ctp.response.action.export.domain.PrintFileInfo;
 import uk.gov.ons.ctp.response.action.export.domain.PrintFileMainfest;
-import uk.gov.ons.ctp.response.action.export.domain.PrintFilesInfo;
 
 @Component
 public class ManifestBuilder {
@@ -36,8 +36,8 @@ public class ManifestBuilder {
   private PrintFileMainfest createManifest(String filename, ByteArrayOutputStream data) {
     String checksum = DigestUtils.md5Hex(data.toByteArray());
 
-    PrintFilesInfo printFilesInfo = new PrintFilesInfo(data.size(), checksum, ".\\", filename);
-    List<PrintFilesInfo> files = new ArrayList<>(Arrays.asList(printFilesInfo));
+    PrintFileInfo printFileInfo = new PrintFileInfo(data.size(), checksum, ".\\", filename);
+    List<PrintFileInfo> files = new ArrayList<>(Arrays.asList(printFileInfo));
 
     String manifestCreatedDateTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
 

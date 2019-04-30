@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class PrintFileMainfest {
   private int schemaVersion;
-  private List<PrintFilesInfo> files;
+  private List<PrintFileInfo> files;
   private String sourceName;
   private String manifestCreated;
 

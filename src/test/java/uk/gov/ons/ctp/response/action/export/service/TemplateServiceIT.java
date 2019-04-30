@@ -33,8 +33,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.ons.ctp.common.message.rabbit.Rabbitmq;
 import uk.gov.ons.ctp.response.action.export.config.AppConfig;
+import uk.gov.ons.ctp.response.action.export.domain.PrintFileInfo;
 import uk.gov.ons.ctp.response.action.export.domain.PrintFileMainfest;
-import uk.gov.ons.ctp.response.action.export.domain.PrintFilesInfo;
 import uk.gov.ons.ctp.response.action.export.utility.ActionRequestBuilder;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
@@ -214,9 +214,9 @@ public class TemplateServiceIT {
     String checksum = DigestUtils.md5Hex(fileLines);
     long printFileSize = getSftpFileSize(filePath);
 
-    PrintFilesInfo printFilesInfo = new PrintFilesInfo(printFileSize, checksum, ".\\", filename);
+    PrintFileInfo printFileInfo = new PrintFileInfo(printFileSize, checksum, ".\\", filename);
 
-    List<PrintFilesInfo> files = Collections.singletonList(printFilesInfo);
+    List<PrintFileInfo> files = Collections.singletonList(printFileInfo);
 
     String manifestCreatedDateTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
 

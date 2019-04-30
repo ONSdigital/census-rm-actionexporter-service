@@ -3,14 +3,19 @@ package uk.gov.ons.ctp.response.action.export.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
-import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.UUID;
 import org.junit.Test;
@@ -26,62 +31,88 @@ import uk.gov.ons.ctp.response.action.export.domain.ExportFile.SendStatus;
 import uk.gov.ons.ctp.response.action.export.domain.ExportJob;
 import uk.gov.ons.ctp.response.action.export.message.EventPublisher;
 import uk.gov.ons.ctp.response.action.export.message.SftpServicePublisher;
-import uk.gov.ons.ctp.response.action.export.repository.ActionRequestRepository;
 import uk.gov.ons.ctp.response.action.export.repository.ExportFileRepository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NotificationFileCreatorTest {
+public class NotificationAndManifestFileCreatorTest {
 
-  private static final SimpleDateFormat FILENAME_DATE_FORMAT =
-      new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss");
+  private static final DateTimeFormatter dateTimeFormatter =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss");
 
   @Mock private Clock clock;
-  @Mock private ActionRequestRepository actionRequestRepository;
   @Mock private SftpServicePublisher sftpService;
   @Mock private EventPublisher eventPublisher;
   @Mock private ExportFileRepository exportFileRepository;
   @Mock private AppConfig appConfig;
-  @InjectMocks private NotificationFileCreator notificationFileCreator;
+  @Mock private ManifestBuilder manifestBuilder;
+  @InjectMocks private NotificationAndManifestFileCreator notificationAndManifestFileCreator;
 
   @Test
-  public void shouldCreateTheCorrectFilename() {
+  public void shouldCreateTheCorrectFilename() throws IOException {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    ByteArrayOutputStream manifestFileBos = new ByteArrayOutputStream();
     ExportJob exportJob = new ExportJob(UUID.randomUUID());
     String[] responseRequiredList = {"123", "ABC", "FOO", "BAR"};
     Date now = new Date();
     Sftp mockSftp = mock(Sftp.class);
     String directory = "Documents/sftp/";
 
+    when(exportFileRepository.existsByFilename(anyString())).thenReturn(false).thenReturn(false);
+    when(manifestBuilder.createManifestData(any(String.class), any())).thenReturn(manifestFileBos);
+
     // Given
     given(clock.millis()).willReturn(now.getTime());
     given(appConfig.getSftp()).willReturn(mockSftp);
     given(mockSftp.getDirectory()).willReturn(directory);
 
+    LocalDateTime testStartTime = LocalDateTime.now().withNano(0);
+
     // When
-    notificationFileCreator.uploadData(
+    notificationAndManifestFileCreator.uploadData(
         "DIRSUFFIX", "TESTFILENAMEPREFIX", bos, exportJob, responseRequiredList, 666);
 
     // Then
-    String expectedFilename =
-        String.format("TESTFILENAMEPREFIX_%s.csv", FILENAME_DATE_FORMAT.format(now));
+    LocalDateTime testEndTest = LocalDateTime.now().withNano(0);
+
     ArgumentCaptor<ExportFile> exportFileArgumentCaptor = ArgumentCaptor.forClass(ExportFile.class);
-    verify(exportFileRepository).saveAndFlush(exportFileArgumentCaptor.capture());
-    assertThat(exportFileArgumentCaptor.getValue().getFilename()).isEqualTo(expectedFilename);
-    assertThat(exportFileArgumentCaptor.getValue().getExportJobId()).isEqualTo(exportJob.getId());
-    assertThat(exportFileArgumentCaptor.getValue().getStatus()).isEqualTo(SendStatus.QUEUED);
+
+    verify(exportFileRepository, times(2)).saveAndFlush(exportFileArgumentCaptor.capture());
+
+    ExportFile csvFileWriteCall = exportFileArgumentCaptor.getAllValues().get(0);
+    String csvActualFileName = csvFileWriteCall.getFilename();
+    LocalDateTime csvActualDateTime =
+        LocalDateTime.parse(csvActualFileName.substring(19, 38), dateTimeFormatter);
+
+    assertThat(csvActualFileName.matches("^TESTFILENAMEPREFIX.*csv$"));
+    assertThat(csvActualDateTime).isBetween(testStartTime, testEndTest);
+    verify(exportFileRepository).saveAndFlush(csvFileWriteCall);
+    assertThat(csvFileWriteCall.getExportJobId()).isEqualTo(exportJob.getId());
+    assertThat(csvFileWriteCall.getStatus()).isEqualTo(SendStatus.QUEUED);
+
+    ExportFile manifestFileWriteCall = exportFileArgumentCaptor.getAllValues().get(1);
+    String manifestActualFileName = manifestFileWriteCall.getFilename();
+    LocalDateTime manifestActualDateTime =
+        LocalDateTime.parse(manifestActualFileName.substring(19, 38), dateTimeFormatter);
+
+    assertThat(manifestActualFileName.matches("^TESTFILENAMEPREFIX.*manifest$"));
+    assertThat(manifestActualDateTime).isBetween(testStartTime, testEndTest);
+    verify(exportFileRepository).saveAndFlush(manifestFileWriteCall);
+    assertThat(manifestFileWriteCall.getExportJobId()).isEqualTo(exportJob.getId());
+    assertThat(manifestFileWriteCall.getStatus()).isEqualTo(SendStatus.QUEUED);
+
     verify(sftpService)
         .sendMessage(
-            eq(directory.concat("DIRSUFFIX/")),
-            eq(expectedFilename),
+            eq("Documents/sftp/DIRSUFFIX/"),
+            eq(csvActualFileName),
             eq(responseRequiredList),
             eq("666"),
             eq(bos));
 
-    verify(eventPublisher).publishEvent(eq("Printed file " + expectedFilename));
+    verify(eventPublisher).publishEvent(eq("Printed file " + csvActualFileName));
   }
 
   @Test
-  public void shouldThrowExceptionForDuplicateFilename() {
+  public void shouldThrowExceptionForDuplicateFilename() throws IOException {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     ExportJob exportJob = new ExportJob(UUID.randomUUID());
     String[] responseRequiredList = {"123", "ABC", "FOO", "BAR"};
@@ -94,7 +125,7 @@ public class NotificationFileCreatorTest {
 
     // When
     try {
-      notificationFileCreator.uploadData(
+      notificationAndManifestFileCreator.uploadData(
           "DIRSUFFIX", "TESTFILENAMEPREFIX", bos, exportJob, responseRequiredList, 666);
     } catch (RuntimeException ex) {
       expectedExceptionThrown = true;

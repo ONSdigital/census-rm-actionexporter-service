@@ -7,6 +7,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ import uk.gov.ons.ctp.response.action.export.domain.ExportJob;
 import uk.gov.ons.ctp.response.action.export.domain.TemplateMapping;
 import uk.gov.ons.ctp.response.action.export.repository.ActionRequestRepository;
 import uk.gov.ons.ctp.response.action.export.repository.ExportJobRepository;
-import uk.gov.ons.ctp.response.action.export.service.NotificationFileCreator;
+import uk.gov.ons.ctp.response.action.export.service.NotificationAndManifestFileCreator;
 import uk.gov.ons.ctp.response.action.export.service.TemplateMappingService;
 import uk.gov.ons.ctp.response.action.export.service.TemplateService;
 
@@ -34,14 +35,14 @@ public class ExportProcessorTest {
 
   @Mock private TemplateMappingService templateMappingService;
   @Mock private ActionRequestRepository actionRequestRepository;
-  @Mock private NotificationFileCreator notificationFileCreator;
+  @Mock private NotificationAndManifestFileCreator notificationAndManifestFileCreator;
   @Mock private ExportJobRepository exportJobRepository;
   @Mock private TemplateService templateService;
 
   @InjectMocks private ExportProcessor exportProcessor;
 
   @Test
-  public void testHappyPath() {
+  public void testHappyPath() throws IOException {
     ExportJob exportJob = new ExportJob(UUID.randomUUID());
     String actionType = "ACTIONTYPE";
 
@@ -90,7 +91,7 @@ public class ExportProcessorTest {
     ArgumentCaptor<ByteArrayOutputStream> bosCaptor =
         ArgumentCaptor.forClass(ByteArrayOutputStream.class);
     String[] responsesRequired = {ari.getActionId().toString()};
-    verify(notificationFileCreator)
+    verify(notificationAndManifestFileCreator)
         .uploadData(
             eq("REQUESTTYPE"),
             eq("FILENAMEPREFIX"),

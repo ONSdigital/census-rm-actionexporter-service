@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.ons.ctp.response.action.export.domain.ActionRequestInstruction;
@@ -20,7 +19,7 @@ import uk.gov.ons.ctp.response.action.export.domain.ExportJob;
 import uk.gov.ons.ctp.response.action.export.domain.TemplateMapping;
 import uk.gov.ons.ctp.response.action.export.repository.ActionRequestRepository;
 import uk.gov.ons.ctp.response.action.export.repository.ExportJobRepository;
-import uk.gov.ons.ctp.response.action.export.service.NotificationFileCreator;
+import uk.gov.ons.ctp.response.action.export.service.NotificationAndManifestFileCreator;
 import uk.gov.ons.ctp.response.action.export.service.TemplateMappingService;
 import uk.gov.ons.ctp.response.action.export.service.TemplateService;
 
@@ -30,22 +29,22 @@ public class ExportProcessor {
 
   private final TemplateMappingService templateMappingService;
 
-  private final NotificationFileCreator notificationFileCreator;
+  private final NotificationAndManifestFileCreator notificationAndManifestFileCreator;
 
   private final ActionRequestRepository actionRequestRepository;
 
-  private TemplateService templateService;
+  private final TemplateService templateService;
 
-  private ExportJobRepository exportJobRepository;
+  private final ExportJobRepository exportJobRepository;
 
   public ExportProcessor(
       TemplateMappingService templateMappingService,
-      NotificationFileCreator notificationFileCreator,
+      NotificationAndManifestFileCreator notificationAndManifestFileCreator,
       ActionRequestRepository actionRequestRepository,
       TemplateService templateService,
       ExportJobRepository exportJobRepository) {
     this.templateMappingService = templateMappingService;
-    this.notificationFileCreator = notificationFileCreator;
+    this.notificationAndManifestFileCreator = notificationAndManifestFileCreator;
     this.actionRequestRepository = actionRequestRepository;
     this.templateService = templateService;
     this.exportJobRepository = exportJobRepository;
@@ -128,13 +127,17 @@ public class ExportProcessor {
                     });
               });
 
-          notificationFileCreator.uploadData(
-              requestType,
-              filenamePrefix,
-              getMergedStreams(streamList),
-              exportJob,
-              responseRequiredList.toArray(new String[0]),
-              actionCount.get());
+          try {
+            notificationAndManifestFileCreator.uploadData(
+                requestType,
+                filenamePrefix,
+                getMergedStreams(streamList),
+                exportJob,
+                responseRequiredList.toArray(new String[0]),
+                actionCount.get());
+          } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+          }
         });
   }
 
@@ -151,10 +154,5 @@ public class ExportProcessor {
     }
 
     return mergedStream;
-  }
-
-  private String getExerciseRefWithoutSurveyRef(String exerciseRef) {
-    String exerciseRefWithoutSurveyRef = StringUtils.substringAfter(exerciseRef, "_");
-    return StringUtils.defaultIfEmpty(exerciseRefWithoutSurveyRef, exerciseRef);
   }
 }

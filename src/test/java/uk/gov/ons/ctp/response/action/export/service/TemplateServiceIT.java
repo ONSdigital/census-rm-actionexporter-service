@@ -47,7 +47,7 @@ import uk.gov.ons.tools.rabbit.SimpleMessageSender;
 public class TemplateServiceIT {
   private static final Logger log = LoggerFactory.getLogger(TemplateServiceIT.class);
   private static final String ICL1E = "ICL1E";
-  private static final String DOCUMENTS_SFTP = "Documents/sftp/print_file/";
+  private static final String DOCUMENTS_SFTP = "Documents/sftp/print_service/";
   private static final int SFTP_FILE_RETRY_ATTEMPTS = 24;
   private static final int SFTP_FILE_SLEEP_SECONDS = 5;
 

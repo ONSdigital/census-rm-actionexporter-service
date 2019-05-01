@@ -12,7 +12,7 @@
     
     <bean id="actionInstructionListenerContainer" class="org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer">
         <property name="connectionFactory" ref="connectionFactory" />
-        <property name="queueNames" value="exampleOutboundQueue" />
+        <property name="queueNames" value="Action.Printer" />
         <property name="concurrentConsumers" value="${messaging.consumingThreads}" />
         <property name="prefetchCount" value="${messaging.prefetchCount}" />
         <property name="txSize" value="${messaging.txSize}" />

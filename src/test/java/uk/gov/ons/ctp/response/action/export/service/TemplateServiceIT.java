@@ -47,7 +47,7 @@ import uk.gov.ons.tools.rabbit.SimpleMessageSender;
 public class TemplateServiceIT {
   private static final Logger log = LoggerFactory.getLogger(TemplateServiceIT.class);
   private static final String ICL1E = "ICL1E";
-  private static final String DOCUMENTS_SFTP = "Documents/sftp/fulfillment/";
+  private static final String DOCUMENTS_SFTP = "Documents/sftp/print_file/";
   private static final int SFTP_FILE_RETRY_ATTEMPTS = 24;
   private static final int SFTP_FILE_SLEEP_SECONDS = 5;
 
@@ -169,7 +169,7 @@ public class TemplateServiceIT {
     Comparator<ChannelSftp.LsEntry> sortByModifiedTimeDescending =
         (f1, f2) -> Integer.compare(f2.getAttrs().getMTime(), f1.getAttrs().getMTime());
 
-    String sftpPath = "Documents/sftp/fulfillment/";
+    String sftpPath = "Documents/sftp/print_file/";
     ChannelSftp.LsEntry[] sftpList = defaultSftpSessionFactory.getSession().list(sftpPath);
 
     System.out.println("Latest File Length list: " + sftpList.length);

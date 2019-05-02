@@ -11,7 +11,7 @@ services:
     container_name: sftp-actionex
     image: atmoz/sftp
     volumes:
-    - ~/Documents/sftp:/home/centos/Documents/sftp
+    - ~/Documents/sftp/print_service:/home/centos/Documents/sftp/print_service
     ports:
     - "1122:22"
     command: centos:JLibV2&XD,:2000

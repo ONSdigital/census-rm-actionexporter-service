@@ -41,15 +41,27 @@ public class ManifestBuilder {
 
     String manifestCreatedDateTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
 
-    // These are hardcoded for now, they will be update and passed in from the actionsvc in the
-    // future
-    return new PrintFileMainfest(
-        1,
-        files,
-        "ONS_RM",
-        manifestCreatedDateTime,
-        "Initial contact letter households - England",
-        "PPD1.1",
-        1);
+    PrintFileMainfest pfm =
+        new PrintFileMainfest(
+            1,
+            files,
+            "ONS_RM",
+            manifestCreatedDateTime,
+            "Initial contact letter households - England",
+            "PPD1.1",
+            1);
+
+    if (filename.startsWith("P_IC_ICL2")) {
+      pfm =
+          new PrintFileMainfest(
+              1,
+              files,
+              "ONS_RM",
+              manifestCreatedDateTime,
+              "Initial contact letter households - Wales",
+              "PPD1.1",
+              1);
+    }
+    return pfm;
   }
 }

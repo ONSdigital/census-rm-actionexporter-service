@@ -1,0 +1,21 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 19-1
+      author: Richard Weeks
+      changes:
+        - sqlFile:
+            comment: Increase length of sample unit ref columns
+            path: add_icl_wales_template.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+
+  - changeSet:
+      id: 19-2
+      author: Richard Weeks
+      changes:
+        - sqlFile:
+            comment: Change request type for england
+            path: update_requesttype_for_england.sql
+            relativeToChangelogFile: true
+            splitStatements: false

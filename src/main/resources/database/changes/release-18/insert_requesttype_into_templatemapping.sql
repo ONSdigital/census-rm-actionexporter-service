@@ -1,4 +1,4 @@
 UPDATE actionexporter.templatemapping
-SET requesttype = 'print_service'
+SET requesttype = 'fulfillment'
 WHERE actiontypenamepk = 'ICL1E';
 

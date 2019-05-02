@@ -169,7 +169,7 @@ public class TemplateServiceIT {
     Comparator<ChannelSftp.LsEntry> sortByModifiedTimeDescending =
         (f1, f2) -> Integer.compare(f2.getAttrs().getMTime(), f1.getAttrs().getMTime());
 
-    String sftpPath = "Documents/sftp/print_file/";
+    String sftpPath = "Documents/sftp/print_service/";
     ChannelSftp.LsEntry[] sftpList = defaultSftpSessionFactory.getSession().list(sftpPath);
 
     System.out.println("Latest File Length list: " + sftpList.length);

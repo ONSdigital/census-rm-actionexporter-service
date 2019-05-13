@@ -89,7 +89,17 @@ public class ActionRequestInstruction {
   @Column(name = "caseref")
   private String caseRef;
 
+  @Column(name = "iac")
   private String iac;
+
+  @Column(name = "iac_wales")
+  private String iacWales;
+
+  @Column(name = "qid")
+  private String qid;
+
+  @Column(name = "qid_wales")
+  private String qidWales;
 
   @Column(name = "datestored")
   private Timestamp dateStored;

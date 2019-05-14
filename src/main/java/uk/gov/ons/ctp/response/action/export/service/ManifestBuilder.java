@@ -62,6 +62,18 @@ public class ManifestBuilder {
               "PPD1.1",
               1);
     }
+
+    if (filename.startsWith("P_IC_H2")) {
+      pfm =
+          new PrintFileMainfest(
+              1,
+              files,
+              "ONS_RM",
+              manifestCreatedDateTime,
+              "Initial contact questionnaire households - Wales",
+              "PPD1.1",
+              1);
+    }
     return pfm;
   }
 }

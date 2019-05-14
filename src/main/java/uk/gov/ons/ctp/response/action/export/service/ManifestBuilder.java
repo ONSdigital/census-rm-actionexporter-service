@@ -41,39 +41,18 @@ public class ManifestBuilder {
 
     String manifestCreatedDateTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
 
-    PrintFileMainfest pfm =
-        new PrintFileMainfest(
-            1,
-            files,
-            "ONS_RM",
-            manifestCreatedDateTime,
-            "Initial contact letter households - England",
-            "PPD1.1",
-            1);
+    String description = "Initial contact letter households - England";
 
     if (filename.startsWith("P_IC_ICL2")) {
-      pfm =
-          new PrintFileMainfest(
-              1,
-              files,
-              "ONS_RM",
-              manifestCreatedDateTime,
-              "Initial contact letter households - Wales",
-              "PPD1.1",
-              1);
+      description = "Initial contact letter households - Wales";
+    } else if (filename.startsWith("P_IC_H2")) {
+      description = "Initial contact questionnaire households - Wales";
     }
 
-    if (filename.startsWith("P_IC_H2")) {
-      pfm =
-          new PrintFileMainfest(
-              1,
-              files,
-              "ONS_RM",
-              manifestCreatedDateTime,
-              "Initial contact questionnaire households - Wales",
-              "PPD1.1",
-              1);
-    }
+    PrintFileMainfest pfm =
+        new PrintFileMainfest(
+            1, files, "ONS_RM", manifestCreatedDateTime, description = description, "PPD1.1", 1);
+
     return pfm;
   }
 }

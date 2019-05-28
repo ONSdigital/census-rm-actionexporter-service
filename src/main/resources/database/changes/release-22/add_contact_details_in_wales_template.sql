@@ -23,3 +23,5 @@ VALUES
 ('ICL2W','icl2w', 'P_IC_ICL2', now(), 'print_service');
 
 
+DELETE FROM actionexporter.templatemapping WHERE actiontypenamepk = 'ICL2E';
+DELETE FROM actionexporter.template WHERE templatenamepk = 'icl2e'

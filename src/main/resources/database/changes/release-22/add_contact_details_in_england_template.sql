@@ -2,10 +2,10 @@ UPDATE actionexporter.template
 SET content =
 '<#list actionRequests as actionRequest>' ||
 '${(actionRequest.iac?trim)!}|' ||
+'${(actionRequest.caseRef?trim)!}|' ||
 '${(actionRequest.contact.title?trim)!}|' ||
 '${(actionRequest.contact.forename?trim)!}|' ||
 '${(actionRequest.contact.surname?trim)!}|' ||
-'${(actionRequest.caseRef?trim)!}|' ||
 '${(actionRequest.address.line1?trim)!}|' ||
 '${(actionRequest.address.line2?trim)!}|' ||
 '${(actionRequest.address.line3?trim)!}|' ||

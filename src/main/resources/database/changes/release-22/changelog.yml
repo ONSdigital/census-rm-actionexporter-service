@@ -1,0 +1,21 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 22-1
+      author: Richard Weeks
+      changes:
+        - sqlFile:
+            comment: Add updated England template
+            path: add_contact_details_in_england_template.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+
+  - changeSet:
+      id: 22-2
+      author: Richard Weeks
+      changes:
+        - sqlFile:
+            comment: Add updated Wales template
+            path: add_contact_details_in_wales_template.sql
+            relativeToChangelogFile: true
+            splitStatements: false

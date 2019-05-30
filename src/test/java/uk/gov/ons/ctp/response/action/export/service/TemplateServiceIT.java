@@ -89,7 +89,7 @@ public class TemplateServiceIT {
     // Then
     String printFilePath = getLatestPrintFile();
     String expectedPrintFileContents =
-        "test-iac|caseRef|Address Line 1|line_2|line_3|postTown|postCode|P_IC_ICL1\n";
+        "test-iac|caseRef||||Address Line 1|line_2|line_3|postTown|postCode|P_IC_ICL1\n";
     String actualPrintFileContents = sftpFileToString(printFilePath);
     assertEquals(actualPrintFileContents, expectedPrintFileContents);
 
@@ -139,7 +139,7 @@ public class TemplateServiceIT {
     // Then
     String printFileLine = readFileContentsToString(getLatestPrintFile());
     assertEquals(
-        "test-iac|caseRef|New Address|line_2|line_3|postTown|postCode|P_IC_ICL1", printFileLine);
+        "test-iac|caseRef||||New Address|line_2|line_3|postTown|postCode|P_IC_ICL1", printFileLine);
   }
 
   private PrintFileMainfest readMainfestFileContentsToJson(String fileName) throws IOException {

@@ -31,14 +31,17 @@ public class ActionExportService {
   private static final String DATE_FORMAT = "dd/MM/yyyy HH:mm";
   private static final int TRANSACTION_TIMEOUT = 60;
 
-  private final HashMap<String, String> actionTypeToPackCodeMap = new HashMap<String, String>() {{
-    put("ICHHQE", "P_IC_H1");
-    put("ICHHQW","P_IC_H2");
-    put("ICHHQN", "P_IC_H4");
-    put("ICL1E", "P_IC_ICL1");
-    put("ICL2W", "P_IC_ICL2");
-    put("ICL4E", "IC_ICL4");
-  }};
+  private final HashMap<String, String> actionTypeToPackCodeMap =
+      new HashMap<String, String>() {
+        {
+          put("ICHHQE", "P_IC_H1");
+          put("ICHHQW", "P_IC_H2");
+          put("ICHHQN", "P_IC_H4");
+          put("ICL1E", "P_IC_ICL1");
+          put("ICL2W", "P_IC_ICL2");
+          put("ICL4E", "P_IC_ICL4");
+        }
+      };
 
   @Autowired private ActionFeedbackPublisher actionFeedbackPubl;
 

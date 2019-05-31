@@ -33,7 +33,7 @@ VALUES
 INSERT INTO actionexporter.templatemapping
 (actiontypenamepk, templatenamefk, filenameprefix, datemodified, requesttype)
 VALUES
-('ICL4E','initial_contact', 'IC_ICL4', now(), 'print_service');
+('ICL4E','initial_contact', 'P_IC_ICL4', now(), 'print_service');
 
 --------------
 --- Questionaire

@@ -99,7 +99,8 @@ sftp:
   host: localhost
   port: 122
   username: centos
-  password: "JLibV2&XD,"
+  privatekey: classpath:id_rsa
+  privatekeypassphrase: secret
   directory: Documents/sftp/
 
 freemarker:

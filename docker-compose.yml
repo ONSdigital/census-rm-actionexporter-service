@@ -12,9 +12,10 @@ services:
     image: atmoz/sftp
     volumes:
     - ~/Documents/sftp/print_service:/home/centos/Documents/sftp/print_service
+    - ./dummy-id_rsa.pub:/home/centos/.ssh/keys/id_rsa.pub:ro
     ports:
     - "1122:22"
-    command: centos:JLibV2&XD,:2000
+    command: centos::2000
 
   rabbitmq:
     container_name: rabbitmq-actionex

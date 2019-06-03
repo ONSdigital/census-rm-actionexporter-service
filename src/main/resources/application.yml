@@ -99,7 +99,7 @@ sftp:
   host: localhost
   port: 122
   username: centos
-  privatekey: classpath:id_rsa
+  privatekey: classpath:dummy-id_rsa
   privatekeypassphrase: secret
   directory: Documents/sftp/
 

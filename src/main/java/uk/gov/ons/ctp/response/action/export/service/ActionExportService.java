@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 import ma.glasnost.orika.MapperFacade;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -48,10 +47,11 @@ public class ActionExportService {
         }
       };
 
-  public ActionExportService( ActionFeedbackPublisher actionFeedbackPubl,
-                              @Qualifier("actionExporterBeanMapper")MapperFacade mapperFacade,
-                              ActionRequestRepository actionRequestRepo,
-                              AddressRepository addressRepo) {
+  public ActionExportService(
+      ActionFeedbackPublisher actionFeedbackPubl,
+      @Qualifier("actionExporterBeanMapper") MapperFacade mapperFacade,
+      ActionRequestRepository actionRequestRepo,
+      AddressRepository addressRepo) {
     this.actionFeedbackPubl = actionFeedbackPubl;
     this.mapperFacade = mapperFacade;
     this.actionRequestRepo = actionRequestRepo;

@@ -1,15 +1,14 @@
 package uk.gov.ons.ctp.response.action.export.service;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+
 import ma.glasnost.orika.MapperFacade;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Qualifier;
 import uk.gov.ons.ctp.response.action.export.message.ActionFeedbackPublisher;
 import uk.gov.ons.ctp.response.action.export.repository.ActionRequestRepository;
 import uk.gov.ons.ctp.response.action.export.repository.AddressRepository;
 import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 
 public class ActionExportServiceTest {
   ActionFeedbackPublisher actionFeedbackPubl = mock(ActionFeedbackPublisher.class);

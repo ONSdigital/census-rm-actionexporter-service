@@ -31,6 +31,11 @@ public class ActionExportService {
   private static final String DATE_FORMAT = "dd/MM/yyyy HH:mm";
   private static final int TRANSACTION_TIMEOUT = 60;
 
+  private final ActionFeedbackPublisher actionFeedbackPubl;
+  private final MapperFacade mapperFacade;
+  private final ActionRequestRepository actionRequestRepo;
+  private final AddressRepository addressRepo;
+
   private final HashMap<String, String> actionTypeToPackCodeMap =
       new HashMap<String, String>() {
         {
@@ -43,15 +48,15 @@ public class ActionExportService {
         }
       };
 
-  @Autowired private ActionFeedbackPublisher actionFeedbackPubl;
-
-  @Qualifier("actionExporterBeanMapper")
-  @Autowired
-  private MapperFacade mapperFacade;
-
-  @Autowired private ActionRequestRepository actionRequestRepo;
-
-  @Autowired private AddressRepository addressRepo;
+  public ActionExportService( ActionFeedbackPublisher actionFeedbackPubl,
+                              @Qualifier("actionExporterBeanMapper")MapperFacade mapperFacade,
+                              ActionRequestRepository actionRequestRepo,
+                              AddressRepository addressRepo) {
+    this.actionFeedbackPubl = actionFeedbackPubl;
+    this.mapperFacade = mapperFacade;
+    this.actionRequestRepo = actionRequestRepo;
+    this.addressRepo = addressRepo;
+  }
 
   @Transactional(
       propagation = Propagation.REQUIRED,

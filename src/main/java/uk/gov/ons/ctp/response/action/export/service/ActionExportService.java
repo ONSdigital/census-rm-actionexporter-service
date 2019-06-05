@@ -39,7 +39,7 @@ public class ActionExportService {
           put("ICHHQN", "P_IC_H4");
           put("ICL1E", "P_IC_ICL1");
           put("ICL2W", "P_IC_ICL2");
-          put("ICL4E", "P_IC_ICL4");
+          put("ICL4N", "P_IC_ICL4");
         }
       };
 

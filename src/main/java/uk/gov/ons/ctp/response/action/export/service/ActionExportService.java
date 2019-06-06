@@ -5,9 +5,9 @@ import com.godaddy.logging.LoggerFactory;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 import ma.glasnost.orika.MapperFacade;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,20 +27,36 @@ import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
 @Service
 public class ActionExportService {
   private static final Logger log = LoggerFactory.getLogger(ActionExportService.class);
-
   private static final String DATE_FORMAT = "dd/MM/yyyy HH:mm";
-
   private static final int TRANSACTION_TIMEOUT = 60;
 
-  @Autowired private ActionFeedbackPublisher actionFeedbackPubl;
+  private final ActionFeedbackPublisher actionFeedbackPubl;
+  private final MapperFacade mapperFacade;
+  private final ActionRequestRepository actionRequestRepo;
+  private final AddressRepository addressRepo;
 
-  @Qualifier("actionExporterBeanMapper")
-  @Autowired
-  private MapperFacade mapperFacade;
+  private final HashMap<String, String> actionTypeToPackCodeMap =
+      new HashMap<String, String>() {
+        {
+          put("ICHHQE", "P_IC_H1");
+          put("ICHHQW", "P_IC_H2");
+          put("ICHHQN", "P_IC_H4");
+          put("ICL1E", "P_IC_ICL1");
+          put("ICL2W", "P_IC_ICL2");
+          put("ICL4N", "P_IC_ICL4");
+        }
+      };
 
-  @Autowired private ActionRequestRepository actionRequestRepo;
-
-  @Autowired private AddressRepository addressRepo;
+  public ActionExportService(
+      ActionFeedbackPublisher actionFeedbackPubl,
+      @Qualifier("actionExporterBeanMapper") MapperFacade mapperFacade,
+      ActionRequestRepository actionRequestRepo,
+      AddressRepository addressRepo) {
+    this.actionFeedbackPubl = actionFeedbackPubl;
+    this.mapperFacade = mapperFacade;
+    this.actionRequestRepo = actionRequestRepo;
+    this.addressRepo = addressRepo;
+  }
 
   @Transactional(
       propagation = Propagation.REQUIRED,
@@ -85,6 +101,7 @@ public class ActionExportService {
       // ActionRequests should never be sent twice with same actionId but...
       log.with("action_id", actionRequestDoc.getActionId()).warn("Key ActionId already exists");
     } else {
+      actionRequestDoc.setPackCode(actionTypeToPackCodeMap.get(actionRequestDoc.getActionType()));
       actionRequestRepo.persist(actionRequestDoc);
     }
 

@@ -41,18 +41,38 @@ public class ManifestBuilder {
 
     String manifestCreatedDateTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
 
-    String description = "Initial contact letter households - England";
-
-    if (filename.startsWith("P_IC_ICL2")) {
-      description = "Initial contact letter households - Wales";
-    } else if (filename.startsWith("P_IC_H2")) {
-      description = "Initial contact questionnaire households - Wales";
-    }
-
     PrintFileMainfest pfm =
         new PrintFileMainfest(
-            1, files, "ONS_RM", manifestCreatedDateTime, description = description, "PPD1.1", 1);
+            1, files, "ONS_RM", manifestCreatedDateTime, getDescription(filename), "PPD1.1", 1);
 
     return pfm;
+  }
+
+  private String getDescription(String filename) {
+    if (filename.startsWith("P_IC_ICL1")) {
+      return "Initial contact letter households - England";
+    }
+
+    if (filename.startsWith("P_IC_ICL2")) {
+      return "Initial contact letter households - Wales";
+    }
+
+    if (filename.startsWith("P_IC_ICL4")) {
+      return "Initial contact letter households - Northern Ireland";
+    }
+
+    if (filename.startsWith("P_IC_H1")) {
+      return "Initial contact questionnaire households - England";
+    }
+
+    if (filename.startsWith("P_IC_H2")) {
+      return "Initial contact questionnaire households - Wales";
+    }
+
+    if (filename.startsWith("P_IC_H4")) {
+      return "Initial contact questionnaire households - Northern Ireland";
+    }
+
+    throw new RuntimeException("Unrecognized filename type: " + filename);
   }
 }

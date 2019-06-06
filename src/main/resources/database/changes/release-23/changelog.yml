@@ -1,0 +1,21 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 23-1
+      author: Luke Loze
+      changes:
+        - sqlFile:
+            comment: remove all mappring and templates
+            path: remove_all_templates_and_mappings.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+
+  - changeSet:
+      id: 23-2
+      author: Luke Loze
+      changes:
+        - sqlFile:
+            comment: Add Initial Contact and Questionaire for all & mappings
+            path: initial_contact_and_questionaire_template.sql
+            relativeToChangelogFile: true
+            splitStatements: false

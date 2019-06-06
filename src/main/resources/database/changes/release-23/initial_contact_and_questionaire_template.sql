@@ -1,6 +1,7 @@
+
 INSERT INTO actionexporter.template
 (templatenamepk, content, datemodified)
-VALUES ('icl2w',
+VALUES ('initial_contact',
         '<#list actionRequests as actionRequest>' ||
         '${(actionRequest.iac?trim)!}|' ||
         '${(actionRequest.caseRef?trim)!}|' ||
@@ -12,12 +13,35 @@ VALUES ('icl2w',
         '${(actionRequest.address.line3?trim)!}|' ||
         '${(actionRequest.address.townName?trim)!}|' ||
         '${(actionRequest.address.postcode?trim)!}|' ||
-        'P_IC_ICL2
+        '${(actionRequest.packCode?trim)!}
         </#list>',
         now());
 
-UPDATE actionexporter.template
-SET content =
+-- England
+INSERT INTO actionexporter.templatemapping
+(actiontypenamepk, templatenamefk, filenameprefix, datemodified, requesttype)
+VALUES
+('ICL1E','initial_contact', 'P_IC_ICL1', now(), 'print_service');
+
+-- Wales
+INSERT INTO actionexporter.templatemapping
+(actiontypenamepk, templatenamefk, filenameprefix, datemodified, requesttype)
+VALUES
+('ICL2W','initial_contact', 'P_IC_ICL2', now(), 'print_service');
+
+-- Nireland
+INSERT INTO actionexporter.templatemapping
+(actiontypenamepk, templatenamefk, filenameprefix, datemodified, requesttype)
+VALUES
+('ICL4N','initial_contact', 'P_IC_ICL4', now(), 'print_service');
+
+--------------
+--- Questionaire
+-------------
+
+INSERT INTO actionexporter.template
+(templatenamepk, content, datemodified)
+VALUES ('questionaire',
         '<#list actionRequests as actionRequest>' ||
         '${(actionRequest.iac?trim)!}|' ||
         '${(actionRequest.qid?trim)!}|' ||
@@ -32,18 +56,27 @@ SET content =
         '${(actionRequest.address.line3?trim)!}|' ||
         '${(actionRequest.address.townName?trim)!}|' ||
         '${(actionRequest.address.postcode?trim)!}|' ||
-        'P_IC_H2
-         </#list>', datemodified =now()
-WHERE templatenamepk = 'ich2w';
+        '${(actionRequest.packCode?trim)!}
+         </#list>',
+         now());
 
+-- England
 INSERT INTO actionexporter.templatemapping
 (actiontypenamepk, templatenamefk, filenameprefix, datemodified, requesttype)
 VALUES
-('ICL2W','icl2w', 'P_IC_ICL2', now(), 'print_service');
+('ICHHQE','questionaire', 'P_IC_H1', now(), 'print_service');
 
+-- Wales
+INSERT INTO actionexporter.templatemapping
+(actiontypenamepk, templatenamefk, filenameprefix, datemodified, requesttype)
+VALUES
+('ICHHQW','questionaire', 'P_IC_H2', now(), 'print_service');
 
-DELETE FROM actionexporter.templatemapping WHERE actiontypenamepk = 'ICL2E';
-DELETE FROM actionexporter.template WHERE templatenamepk = 'icl2e'
+-- Nireland
+INSERT INTO actionexporter.templatemapping
+(actiontypenamepk, templatenamefk, filenameprefix, datemodified, requesttype)
+VALUES
+('ICHHQN','questionaire', 'P_IC_H4', now(), 'print_service');
 
-
-
+ALTER TABLE actionexporter.actionrequest
+ADD COLUMN packcode character varying (24);

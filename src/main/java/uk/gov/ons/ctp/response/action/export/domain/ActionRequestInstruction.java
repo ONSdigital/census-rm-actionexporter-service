@@ -118,4 +118,7 @@ public class ActionRequestInstruction {
 
   @Column(name = "sampleunitref")
   private String sampleUnitRef;
+
+  @Column(name = "packcode")
+  private String packCode;
 }

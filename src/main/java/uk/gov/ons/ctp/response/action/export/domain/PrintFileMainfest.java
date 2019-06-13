@@ -11,7 +11,6 @@ public class PrintFileMainfest {
   private List<PrintFileInfo> files;
   private String sourceName;
   private String manifestCreated;
-
   private String description;
   private String dataset;
   private int version;

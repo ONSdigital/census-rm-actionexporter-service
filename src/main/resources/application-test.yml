@@ -14,7 +14,8 @@ sftp:
   port: 1122
   host: localhost
   username: centos
-  password: "JLibV2&XD,"
+  privatekey: classpath:dummy-id_rsa
+  privatekeypassphrase: secret
   directory: Documents/sftp/
 
 data-grid:

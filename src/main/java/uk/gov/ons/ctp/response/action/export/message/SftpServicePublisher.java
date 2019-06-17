@@ -83,6 +83,15 @@ public class SftpServicePublisher {
   @ServiceActivator(inputChannel = "sftpFailedProcess")
   public void sftpFailedProcess(GenericMessage message) {
     MessagingException payload = (MessagingException) message.getPayload();
+    log.error("SFTP FAILURE CAUSE stacktrace", payload.getCause());
+    log.error("SFTP FAILURE ROOT CAUSE stacktrace", payload.getRootCause());
+    if (payload.getCause() != null) {
+      log.error("SFTP FAILURE CAUSE message: {}", payload.getCause().getMessage());
+    }
+    if (payload.getCause() != null) {
+      log.error("SFTP FAILURE ROOT CAUSE message: {}", payload.getRootCause().getMessage());
+    }
+
     MessageHeaders headers = payload.getFailedMessage().getHeaders();
     String fileName = (String) headers.get(FileHeaders.REMOTE_FILE);
     int actionCount = Integer.valueOf((String) headers.get(ACTION_COUNT));

@@ -88,7 +88,7 @@ public class SftpServicePublisher {
     if (payload.getCause() != null) {
       log.error("SFTP FAILURE CAUSE message: {}", payload.getCause().getMessage());
     }
-    if (payload.getCause() != null) {
+    if (payload.getRootCause() != null) {
       log.error("SFTP FAILURE ROOT CAUSE message: {}", payload.getRootCause().getMessage());
     }
 

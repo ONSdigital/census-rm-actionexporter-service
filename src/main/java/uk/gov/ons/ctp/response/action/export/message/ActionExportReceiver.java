@@ -15,9 +15,7 @@ public class ActionExportReceiver {
 
   @Autowired private ActionExportService actionExportService;
 
-  @ServiceActivator(
-      inputChannel = "actionInstructionTransformed",
-      adviceChain = "actionInstructionRetryAdvice")
+  @ServiceActivator(inputChannel = "actionInstructionTransformed")
   public void acceptInstruction(ActionInstruction instruction) {
     actionExportService.acceptInstruction(instruction);
   }

@@ -18,7 +18,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.export.domain.ActionRequestInstruction;
 import uk.gov.ons.ctp.response.action.export.domain.TemplateExpression;
 import uk.gov.ons.ctp.response.action.export.repository.TemplateRepository;
@@ -49,11 +48,11 @@ public class TemplateService {
   }
 
   public TemplateExpression storeTemplate(String templateName, InputStream fileContents)
-      throws CTPException {
+      throws RuntimeException {
     String stringValue = getStringFromInputStream(fileContents);
     if (StringUtils.isEmpty(stringValue)) {
       log.error(EXCEPTION_STORE_TEMPLATE);
-      throw new CTPException(CTPException.Fault.SYSTEM_ERROR, EXCEPTION_STORE_TEMPLATE);
+      throw new RuntimeException(EXCEPTION_STORE_TEMPLATE);
     }
 
     TemplateExpression template = new TemplateExpression();

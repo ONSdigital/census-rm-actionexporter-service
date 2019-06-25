@@ -2,6 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.gov.ons.ctp.product</groupId>
     <artifactId>census-rm-actionexportersvc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -12,13 +13,22 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <springboot.version>1.5.6.RELEASE</springboot.version>
+        <springcloud.version>Dalston.SR1</springcloud.version>
+        <common.version>10.49.4</common.version>
+        <java.version>1.8</java.version>
+        <orika.version>1.5.1</orika.version>
+        <surefire.version>2.20</surefire.version>
+        <godaddylogging.version>1.2.5</godaddylogging.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
-    <parent>
-        <groupId>uk.gov.ons.ctp.product</groupId>
-        <artifactId>rm-common-config</artifactId>
-        <version>10.49.13</version>
-    </parent>
+<!--    <parent>-->
+<!--        <groupId>uk.gov.ons.ctp.product</groupId>-->
+<!--        <artifactId>rm-common-config</artifactId>-->
+<!--        <version>10.49.13</version>-->
+<!--    </parent>-->
 
     <scm>
         <connection>scm:git:https://github.com/ONSdigital/census-rm-actionexporter-service</connection>
@@ -32,7 +42,7 @@
         <profile>
             <id>artifactory</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
 
             <repositories>
@@ -51,11 +61,10 @@
 
     <dependencies>
 
-        <!--dependencies to build xsd-->
-
         <dependency>
             <groupId>net.codesup.util</groupId>
             <artifactId>jaxb2-rich-contract-plugin</artifactId>
+            <version>1.18.0</version>
         </dependency>
 
         <dependency>
@@ -70,105 +79,127 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-integration</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-core</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-amqp</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-xml</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-file</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-http</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-sftp</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-rabbit</artifactId>
+            <version>1.7.3.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-spring-service-connector</artifactId>
+            <version>1.2.4.RELEASE</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-sleuth-zipkin -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+            <version>1.2.1.RELEASE</version>
         </dependency>
 
-        <!-- If you intend to deploy the app on Cloud Foundry, add the following -->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-cloudfoundry-connector</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.8</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.2.0</version>
         </dependency>
 
         <!-- SPRING END -->
 
-        <dependency>
-            <groupId>uk.gov.ons.ctp.product</groupId>
-            <artifactId>reportmodule</artifactId>
-            <version>10.49.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>uk.gov.ons.ctp.product</groupId>-->
+<!--            <artifactId>reportmodule</artifactId>-->
+<!--            <version>10.49.0</version>-->
+<!--        </dependency>-->
 
-        <dependency>
-            <groupId>uk.gov.ons.ctp.common</groupId>
-            <artifactId>framework</artifactId>
-            <version>10.49.21</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>uk.gov.ons.ctp.common</groupId>-->
+<!--            <artifactId>framework</artifactId>-->
+<!--            <version>10.49.21</version>-->
+<!--        </dependency>-->
 
-        <dependency>
-            <groupId>uk.gov.ons.tools</groupId>
-            <artifactId>rabbit</artifactId>
-            <version>1.0.2</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>uk.gov.ons.tools</groupId>-->
+<!--            <artifactId>rabbit</artifactId>-->
+<!--            <version>1.0.2</version>-->
+<!--        </dependency>-->
         <!-- ONS END -->
 
         <!-- Third party libraries -->
@@ -176,54 +207,337 @@
         <dependency>
             <groupId>ma.glasnost.orika</groupId>
             <artifactId>orika-eclipse-tools</artifactId>
+            <version>${orika.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+            <version>3.5.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+            <version>9.4.1212.jre7</version>
         </dependency>
 
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
+            <version>4.11</version>
         </dependency>
 
         <dependency>
             <groupId>net.sourceforge.cobertura</groupId>
             <artifactId>cobertura</artifactId>
+            <version>2.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>com.godaddy</groupId>
             <artifactId>logging</artifactId>
+            <version>${godaddylogging.version}</version>
         </dependency>
         <!-- Third party end -->
 
         <!-- Testing -->
 
-        <dependency>
-            <groupId>uk.gov.ons.ctp.common</groupId>
-            <artifactId>test-framework</artifactId>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>uk.gov.ons.ctp.common</groupId>-->
+<!--            <artifactId>test-framework</artifactId>-->
+<!--            <version>${common.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>4.3.10.RELEASE</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
+<!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;            <groupId>org.springframework.boot</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <artifactId>spring-boot-dependencies</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <version>${springboot.version}</version>&ndash;&gt;-->
+<!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;            <groupId>org.springframework.cloud</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <artifactId>spring-cloud-dependencies</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <version>${springcloud.version}</version>&ndash;&gt;-->
+<!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;            <groupId>uk.gov.ons.ctp.common</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <artifactId>framework</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <version>${common.version}</version>&ndash;&gt;-->
+<!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
+
+<!--        <dependency>-->
+<!--            <groupId>ma.glasnost.orika</groupId>-->
+<!--            <artifactId>orika-core</artifactId>-->
+<!--            <version>${orika.version}</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>ma.glasnost.orika</groupId>-->
+<!--            <artifactId>orika-eclipse-tools</artifactId>-->
+<!--            <version>${orika.version}</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>net.logstash.logback</groupId>-->
+<!--            <artifactId>logstash-logback-encoder</artifactId>-->
+<!--            <version>4.11</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.redisson</groupId>-->
+<!--            <artifactId>redisson</artifactId>-->
+<!--            <version>3.2.0</version>-->
+<!--        </dependency>-->
+
+<!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;            <groupId>io.springfox</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <artifactId>springfox-swagger2</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <version>2.7.0</version>&ndash;&gt;-->
+<!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;            <groupId>io.springfox</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <artifactId>springfox-swagger-ui</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <version>2.7.0</version>&ndash;&gt;-->
+<!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
+
+<!--        <dependency>-->
+<!--            <groupId>net.sourceforge.cobertura</groupId>-->
+<!--            <artifactId>cobertura</artifactId>-->
+<!--            <version>2.1.1</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>net.codesup.util</groupId>-->
+<!--            <artifactId>jaxb2-rich-contract-plugin</artifactId>-->
+<!--            <version>1.18.0</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.apache.commons</groupId>-->
+<!--            <artifactId>commons-csv</artifactId>-->
+<!--            <version>1.4</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>com.godaddy</groupId>-->
+<!--            <artifactId>logging</artifactId>-->
+<!--            <version>${godaddylogging.version}</version>-->
+<!--        </dependency>-->
+
+
+<!--        <dependency>-->
+<!--            <groupId>org.testng</groupId>-->
+<!--            <artifactId>testng</artifactId>-->
+<!--            <version>6.11</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>uk.gov.ons.ctp.common</groupId>-->
+<!--            <artifactId>test-framework</artifactId>-->
+<!--            <version>${common.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+
+
+<!--        &lt;!&ndash;dependencies to build xsd&ndash;&gt;-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.jvnet.jaxb2_commons</groupId>-->
+<!--            <artifactId>jaxb2-basics</artifactId>-->
+<!--            <version>1.11.1</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
+
+<!--        &lt;!&ndash; Spring dependencies &ndash;&gt;-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-freemarker</artifactId>-->
+<!--            <version>${springboot.version}</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-integration</artifactId>-->
+<!--            <version>${springboot.version}</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.integration</groupId>-->
+<!--            <artifactId>spring-integration-core</artifactId>-->
+<!--            <version>4.3.11.RELEASE</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.integration</groupId>-->
+<!--            <artifactId>spring-integration-amqp</artifactId>-->
+<!--            <version>4.3.11.RELEASE</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.integration</groupId>-->
+<!--            <artifactId>spring-integration-xml</artifactId>-->
+<!--            <version>4.3.11.RELEASE</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.integration</groupId>-->
+<!--            <artifactId>spring-integration-file</artifactId>-->
+<!--            <version>4.3.11.RELEASE</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.integration</groupId>-->
+<!--            <artifactId>spring-integration-http</artifactId>-->
+<!--            <version>4.3.11.RELEASE</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.integration</groupId>-->
+<!--            <artifactId>spring-integration-sftp</artifactId>-->
+<!--            <version>4.3.11.RELEASE</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.amqp</groupId>-->
+<!--            <artifactId>spring-rabbit</artifactId>-->
+<!--            <version>1.7.3.RELEASE</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-actuator</artifactId>-->
+<!--            <version>${springboot.version}</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-configuration-processor</artifactId>-->
+<!--            <optional>true</optional>-->
+<!--            <version>${springboot.version}</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-jpa</artifactId>-->
+<!--            <version>${springboot.version}</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-jetty</artifactId>-->
+<!--            <version>${springboot.version}</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-spring-service-connector</artifactId>-->
+<!--            <version>1.2.4.RELEASE</version>-->
+<!--        </dependency>-->
+
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-sleuth-zipkin &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-sleuth-zipkin</artifactId>-->
+<!--            <version>1.2.1.RELEASE</version>-->
+<!--        </dependency>-->
+
+
+<!--        <dependency>-->
+<!--            <groupId>uk.gov.ons.ctp.product</groupId>-->
+<!--            <artifactId>reportmodule</artifactId>-->
+<!--            <version>10.49.0</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>uk.gov.ons.ctp.common</groupId>-->
+<!--            <artifactId>framework</artifactId>-->
+<!--            <version>10.49.21</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>uk.gov.ons.tools</groupId>-->
+<!--            <artifactId>rabbit</artifactId>-->
+<!--            <version>1.0.2</version>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash; ONS END &ndash;&gt;-->
+
+<!--        &lt;!&ndash; Third party libraries &ndash;&gt;-->
+
+<!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;            <groupId>ma.glasnost.orika</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <artifactId>orika-eclipse-tools</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.liquibase</groupId>-->
+<!--            <artifactId>liquibase-core</artifactId>-->
+<!--            <version>3.5.3</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.postgresql</groupId>-->
+<!--            <artifactId>postgresql</artifactId>-->
+<!--            <scope>runtime</scope>-->
+<!--            <version>9.4.1212.jre7</version>-->
+<!--        </dependency>-->
+
+<!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;            <groupId>net.logstash.logback</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <artifactId>logstash-logback-encoder</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;            <groupId>net.sourceforge.cobertura</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <artifactId>cobertura</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;            <groupId>com.godaddy</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <artifactId>logging</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
+<!--        &lt;!&ndash; Third party end &ndash;&gt;-->
+
+<!--        &lt;!&ndash; Testing &ndash;&gt;-->
+
+<!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;            <groupId>uk.gov.ons.ctp.common</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <artifactId>test-framework</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;            <scope>test</scope>&ndash;&gt;-->
+<!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework</groupId>-->
+<!--            <artifactId>spring-test</artifactId>-->
+<!--            <version>4.3.10.RELEASE</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>junit</groupId>-->
+<!--            <artifactId>junit</artifactId>-->
+<!--            <version>4.12</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
     </dependencies>
 
@@ -233,39 +547,145 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <scmCommentPrefix>[ci skip]</scmCommentPrefix>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>com.coveo</groupId>
-                <artifactId>fmt-maven-plugin</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.2</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.17</version>
                 <configuration>
-                    <executable>true</executable>
-                    <mainClass>uk.gov.ons.ctp.response.action.ActionExporterApplication</mainClass>
+                    <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>8.1</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <configLocation>https://raw.githubusercontent.com/ONSdigital/rm-common-config/master/checkstyle/ons-checkstyle-config.xml</configLocation>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                            <violationSeverity>info</violationSeverity>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.coveo</groupId>
+                <artifactId>fmt-maven-plugin</artifactId>
+                <version>2.5.0</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>repackage</goal>
+                            <goal>format</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+                <configuration>
+                    <threadCount>1</threadCount>
+                </configuration>
+                <!-- REQUIRED for unit tests to run -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>${surefire.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                    <timestampFormat>{0,date,yyyy-MM-dd'T'HH:mm:ss'Z'}</timestampFormat>
+                    <items>
+                        <item>timestamp</item>
+                    </items>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${springboot.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.13.1</version>
+            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>com.coveo</groupId>-->
+<!--                <artifactId>fmt-maven-plugin</artifactId>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-checkstyle-plugin</artifactId>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>buildnumber-maven-plugin</artifactId>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <executable>true</executable>-->
+<!--                    <mainClass>uk.gov.ons.ctp.response.action.ActionExporterApplication</mainClass>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>repackage</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -370,106 +790,106 @@
             </plugin>
 
 
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <id>inbound</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>
-                            <bindingIncludes>
-                                <include>actionFeedback.xjb</include>
-                            </bindingIncludes>
-                            <bindingExcludes>
-                                <include>actionInstruction.xjb</include>
-                            </bindingExcludes>
-                            <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>
-                            <schemaIncludes>
-                                <include>actionFeedback.xsd</include>
-                            </schemaIncludes>
-                            <generateDirectory>${project.build.directory}/generated-sources/xjc/inbound
-                            </generateDirectory>
-                            <args>
-                                <arg>-Xvalue-constructor</arg>
-                                <arg>-Xfluent-builder</arg>
-                                <arg>-generateTools=n</arg>
-                                <arg>-XsimpleEquals</arg>
-                                <arg>-XsimpleHashCode</arg>
-                                <arg>-XtoString</arg>
-                            </args>
-                            <plugins>
-                                <plugin>
-                                    <groupId>net.codesup.util</groupId>
-                                    <artifactId>jaxb2-rich-contract-plugin</artifactId>
-                                    <version>1.18.0</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.jvnet.jaxb2_commons</groupId>
-                                    <artifactId>jaxb2-value-constructor</artifactId>
-                                    <version>3.0</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.jvnet.jaxb2_commons</groupId>
-                                    <artifactId>jaxb2-basics</artifactId>
-                                    <version>1.11.1</version>
-                                </plugin>
-                            </plugins>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <id>outbound</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>
-                            <bindingIncludes>
-                                <include>actionInstruction.xjb</include>
-                            </bindingIncludes>
-                            <bindingExcludes>
-                                <include>actionFeedback.xjb</include>
-                            </bindingExcludes>
-                            <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>
-                            <schemaIncludes>
-                                <include>actionInstruction.xsd</include>
-                            </schemaIncludes>
-                            <generateDirectory>${project.build.directory}/generated-sources/xjc/outbound
-                            </generateDirectory>
-                            <args>
-                                <arg>-Xvalue-constructor</arg>
-                                <arg>-Xfluent-builder</arg>
-                                <arg>-generateTools=n</arg>
-                                <arg>-XsimpleEquals</arg>
-                                <arg>-XsimpleHashCode</arg>
-                                <arg>-XtoString</arg>
-                            </args>
-                            <plugins>
-                                <plugin>
-                                    <groupId>net.codesup.util</groupId>
-                                    <artifactId>jaxb2-rich-contract-plugin</artifactId>
-                                    <version>1.18.0</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.jvnet.jaxb2_commons</groupId>
-                                    <artifactId>jaxb2-value-constructor</artifactId>
-                                    <version>3.0</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.jvnet.jaxb2_commons</groupId>
-                                    <artifactId>jaxb2-basics</artifactId>
-                                    <version>1.11.1</version>
-                                </plugin>
-                            </plugins>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.jvnet.jaxb2.maven2</groupId>-->
+<!--                <artifactId>maven-jaxb2-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>generate-sources</phase>-->
+<!--                        <id>inbound</id>-->
+<!--                        <goals>-->
+<!--                            <goal>generate</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>-->
+<!--                            <bindingIncludes>-->
+<!--                                <include>actionFeedback.xjb</include>-->
+<!--                            </bindingIncludes>-->
+<!--                            <bindingExcludes>-->
+<!--                                <include>actionInstruction.xjb</include>-->
+<!--                            </bindingExcludes>-->
+<!--                            <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>-->
+<!--                            <schemaIncludes>-->
+<!--                                <include>actionFeedback.xsd</include>-->
+<!--                            </schemaIncludes>-->
+<!--                            <generateDirectory>${project.build.directory}/generated-sources/xjc/inbound-->
+<!--                            </generateDirectory>-->
+<!--                            <args>-->
+<!--                                <arg>-Xvalue-constructor</arg>-->
+<!--                                <arg>-Xfluent-builder</arg>-->
+<!--                                <arg>-generateTools=n</arg>-->
+<!--                                <arg>-XsimpleEquals</arg>-->
+<!--                                <arg>-XsimpleHashCode</arg>-->
+<!--                                <arg>-XtoString</arg>-->
+<!--                            </args>-->
+<!--                            <plugins>-->
+<!--                                <plugin>-->
+<!--                                    <groupId>net.codesup.util</groupId>-->
+<!--                                    <artifactId>jaxb2-rich-contract-plugin</artifactId>-->
+<!--                                    <version>1.18.0</version>-->
+<!--                                </plugin>-->
+<!--                                <plugin>-->
+<!--                                    <groupId>org.jvnet.jaxb2_commons</groupId>-->
+<!--                                    <artifactId>jaxb2-value-constructor</artifactId>-->
+<!--                                    <version>3.0</version>-->
+<!--                                </plugin>-->
+<!--                                <plugin>-->
+<!--                                    <groupId>org.jvnet.jaxb2_commons</groupId>-->
+<!--                                    <artifactId>jaxb2-basics</artifactId>-->
+<!--                                    <version>1.11.1</version>-->
+<!--                                </plugin>-->
+<!--                            </plugins>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <phase>generate-sources</phase>-->
+<!--                        <id>outbound</id>-->
+<!--                        <goals>-->
+<!--                            <goal>generate</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>-->
+<!--                            <bindingIncludes>-->
+<!--                                <include>actionInstruction.xjb</include>-->
+<!--                            </bindingIncludes>-->
+<!--                            <bindingExcludes>-->
+<!--                                <include>actionFeedback.xjb</include>-->
+<!--                            </bindingExcludes>-->
+<!--                            <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>-->
+<!--                            <schemaIncludes>-->
+<!--                                <include>actionInstruction.xsd</include>-->
+<!--                            </schemaIncludes>-->
+<!--                            <generateDirectory>${project.build.directory}/generated-sources/xjc/outbound-->
+<!--                            </generateDirectory>-->
+<!--                            <args>-->
+<!--                                <arg>-Xvalue-constructor</arg>-->
+<!--                                <arg>-Xfluent-builder</arg>-->
+<!--                                <arg>-generateTools=n</arg>-->
+<!--                                <arg>-XsimpleEquals</arg>-->
+<!--                                <arg>-XsimpleHashCode</arg>-->
+<!--                                <arg>-XtoString</arg>-->
+<!--                            </args>-->
+<!--                            <plugins>-->
+<!--                                <plugin>-->
+<!--                                    <groupId>net.codesup.util</groupId>-->
+<!--                                    <artifactId>jaxb2-rich-contract-plugin</artifactId>-->
+<!--                                    <version>1.18.0</version>-->
+<!--                                </plugin>-->
+<!--                                <plugin>-->
+<!--                                    <groupId>org.jvnet.jaxb2_commons</groupId>-->
+<!--                                    <artifactId>jaxb2-value-constructor</artifactId>-->
+<!--                                    <version>3.0</version>-->
+<!--                                </plugin>-->
+<!--                                <plugin>-->
+<!--                                    <groupId>org.jvnet.jaxb2_commons</groupId>-->
+<!--                                    <artifactId>jaxb2-basics</artifactId>-->
+<!--                                    <version>1.11.1</version>-->
+<!--                                </plugin>-->
+<!--                            </plugins>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
 
         </plugins>
         <resources>

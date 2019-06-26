@@ -7,12 +7,12 @@ import java.util.Collections;
 import java.util.UUID;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionAddress;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionContact;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionEvent;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
-import uk.gov.ons.ctp.response.action.message.instruction.Priority;
+import uk.gov.ons.ctp.response.action.export.actioninstuction.ActionAddress;
+import uk.gov.ons.ctp.response.action.export.actioninstuction.ActionContact;
+import uk.gov.ons.ctp.response.action.export.actioninstuction.ActionEvent;
+import uk.gov.ons.ctp.response.action.export.actioninstuction.ActionInstruction;
+import uk.gov.ons.ctp.response.action.export.actioninstuction.ActionRequest;
+import uk.gov.ons.ctp.response.action.export.actioninstuction.Priority;
 
 public class ActionRequestBuilder {
 

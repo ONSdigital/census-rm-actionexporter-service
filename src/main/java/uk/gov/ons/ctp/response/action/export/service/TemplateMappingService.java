@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.ons.ctp.common.error.CTPException;
 import uk.gov.ons.ctp.response.action.export.domain.TemplateMapping;
 import uk.gov.ons.ctp.response.action.export.repository.TemplateMappingRepository;
 
@@ -36,25 +35,12 @@ public class TemplateMappingService {
     return templateMappingList;
   }
 
-  public TemplateMapping retrieveTemplateMappingByActionType(String actionType)
-      throws CTPException {
-    TemplateMapping templateMapping = repository.findOne(actionType);
-    if (templateMapping == null) {
-      log.with("action_type", actionType).error("No template mapping for actionType found.");
-      throw new CTPException(
-          CTPException.Fault.RESOURCE_NOT_FOUND,
-          String.format("%s %s", EXCEPTION_RETRIEVING_TEMPLATE_MAPPING, actionType));
-    }
-    return templateMapping;
-  }
-
   public List<TemplateMapping> retrieveAllTemplateMappings() {
     return repository.findAll();
   }
 
   public Map<String, List<TemplateMapping>> retrieveAllTemplateMappingsByFilename() {
-    return retrieveAllTemplateMappings()
-        .stream()
+    return retrieveAllTemplateMappings().stream()
         .collect(Collectors.groupingBy(TemplateMapping::getFileNamePrefix));
   }
 

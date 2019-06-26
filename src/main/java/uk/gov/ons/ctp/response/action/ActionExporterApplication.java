@@ -21,8 +21,7 @@ import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import uk.gov.ons.ctp.common.error.RestExceptionHandler;
-import uk.gov.ons.ctp.common.jackson.CustomObjectMapper;
+import uk.gov.ons.ctp.response.action.export.common.CustomObjectMapper;
 import uk.gov.ons.ctp.response.action.export.config.AppConfig;
 import uk.gov.ons.ctp.response.action.export.repository.impl.BaseRepositoryImpl;
 
@@ -49,10 +48,10 @@ public class ActionExporterApplication {
    *
    * @return a Rest Exception Handler
    */
-  @Bean
-  public RestExceptionHandler restExceptionHandler() {
-    return new RestExceptionHandler();
-  }
+  //  @Bean
+  //  public RestExceptionHandler restExceptionHandler() {
+  //    return new RestExceptionHandler();
+  //  }
 
   /**
    * Custom Object Mapper

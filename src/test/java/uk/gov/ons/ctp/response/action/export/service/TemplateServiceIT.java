@@ -31,14 +31,14 @@ import org.springframework.integration.sftp.session.DefaultSftpSessionFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import uk.gov.ons.ctp.common.message.rabbit.Rabbitmq;
+import uk.gov.ons.ctp.response.action.export.actioninstuction.ActionInstruction;
+import uk.gov.ons.ctp.response.action.export.actioninstuction.ActionRequest;
+import uk.gov.ons.ctp.response.action.export.common.SimpleMessageSender;
 import uk.gov.ons.ctp.response.action.export.config.AppConfig;
+import uk.gov.ons.ctp.response.action.export.config.Rabbitmq;
 import uk.gov.ons.ctp.response.action.export.domain.PrintFileInfo;
 import uk.gov.ons.ctp.response.action.export.domain.PrintFileMainfest;
 import uk.gov.ons.ctp.response.action.export.utility.ActionRequestBuilder;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionRequest;
-import uk.gov.ons.tools.rabbit.SimpleMessageSender;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration

@@ -5,10 +5,10 @@ import static org.mockito.Mockito.mock;
 
 import ma.glasnost.orika.MapperFacade;
 import org.junit.Test;
+import uk.gov.ons.ctp.response.action.export.actioninstuction.ActionInstruction;
 import uk.gov.ons.ctp.response.action.export.message.ActionFeedbackPublisher;
 import uk.gov.ons.ctp.response.action.export.repository.ActionRequestRepository;
 import uk.gov.ons.ctp.response.action.export.repository.AddressRepository;
-import uk.gov.ons.ctp.response.action.message.instruction.ActionInstruction;
 
 public class ActionExportServiceTest {
   ActionFeedbackPublisher actionFeedbackPubl = mock(ActionFeedbackPublisher.class);

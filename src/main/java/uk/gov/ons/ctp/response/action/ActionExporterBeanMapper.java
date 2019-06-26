@@ -6,7 +6,7 @@ import ma.glasnost.orika.impl.ConfigurableMapper;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.impl.generator.EclipseJdtCompilerStrategy;
 import org.springframework.stereotype.Component;
-import uk.gov.ons.ctp.common.util.StringToUUIDConverter;
+import uk.gov.ons.ctp.response.action.export.common.StringToUUIDConverter;
 import uk.gov.ons.ctp.response.action.export.domain.ActionRequestInstruction;
 import uk.gov.ons.ctp.response.action.export.domain.TemplateExpression;
 import uk.gov.ons.ctp.response.action.export.domain.TemplateMapping;

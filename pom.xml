@@ -2,6 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.gov.ons.census.action</groupId>
     <artifactId>census-rm-actionexportersvc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -12,50 +13,64 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <springboot.version>1.5.6.RELEASE</springboot.version>
+        <springcloud.version>Dalston.SR1</springcloud.version>
+        <common.version>10.49.4</common.version>
+        <java.version>1.8</java.version>
+        <orika.version>1.5.1</orika.version>
+        <surefire.version>2.20</surefire.version>
+        <godaddylogging.version>1.2.5</godaddylogging.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
+
     <parent>
-        <groupId>uk.gov.ons.ctp.product</groupId>
-        <artifactId>rm-common-config</artifactId>
-        <version>10.49.13</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.6.RELEASE</version>
     </parent>
+    <!--    <parent>-->
+    <!--        <groupId>uk.gov.ons.ctp.product</groupId>-->
+    <!--        <artifactId>rm-common-config</artifactId>-->
+    <!--        <version>10.49.13</version>-->
+    <!--    </parent>-->
 
-    <scm>
-        <connection>scm:git:https://github.com/ONSdigital/census-rm-actionexporter-service</connection>
-        <developerConnection>scm:git:https://github.com/ONSdigital/census-rm-actionexporter-service
-        </developerConnection>
-        <url>https://github.com/ONSdigital/census-rm-actionexporter-service</url>
-        <tag>census-rm-actionexportersvc-0.0.1</tag>
-    </scm>
+    <!--    <scm>-->
+    <!--        <connection>scm:git:https://github.com/ONSdigital/census-rm-actionexporter-service</connection>-->
+    <!--        <developerConnection>scm:git:https://github.com/ONSdigital/census-rm-actionexporter-service-->
+    <!--        </developerConnection>-->
+    <!--        <url>https://github.com/ONSdigital/census-rm-actionexporter-service</url>-->
+    <!--        <tag>census-rm-actionexportersvc-0.0.1</tag>-->
+    <!--    </scm>-->
 
-    <profiles>
-        <profile>
-            <id>artifactory</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>artifactory</id>-->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
 
-            <repositories>
-                <repository>
-                    <id>release-repo</id>
-                    <name>libs-release</name>
-                    <url>http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local</url>
-                </repository>
-                <repository>
-                    <id>snapshot-repo</id>
-                    <url>http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local/</url>
-                </repository>
-            </repositories>
-        </profile>
-    </profiles>
+<!--            <repositories>-->
+<!--                <repository>-->
+<!--                    <id>release-repo</id>-->
+<!--                    <name>libs-release</name>-->
+<!--                    <url>http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local</url>-->
+<!--                </repository>-->
+<!--                <repository>-->
+<!--                    <id>snapshot-repo</id>-->
+<!--                    <url>http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local/</url>-->
+<!--                </repository>-->
+<!--            </repositories>-->
+<!--        </profile>-->
+<!--    </profiles>-->
 
     <dependencies>
-
         <!--dependencies to build xsd-->
-
         <dependency>
             <groupId>net.codesup.util</groupId>
             <artifactId>jaxb2-rich-contract-plugin</artifactId>
+            <version>1.18.0</version>
         </dependency>
 
         <dependency>
@@ -70,160 +85,217 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-integration</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-core</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-amqp</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-xml</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-file</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-http</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-sftp</artifactId>
+            <version>4.3.11.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-rabbit</artifactId>
+            <version>1.7.3.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-spring-service-connector</artifactId>
+            <version>1.2.4.RELEASE</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-sleuth-zipkin -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-sleuth-zipkin</artifactId>
-        </dependency>
-
-        <!-- If you intend to deploy the app on Cloud Foundry, add the following -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-cloudfoundry-connector</artifactId>
-        </dependency>
-
-        <!-- SPRING END -->
-
-        <dependency>
-            <groupId>uk.gov.ons.ctp.product</groupId>
-            <artifactId>reportmodule</artifactId>
-            <version>10.49.0</version>
+            <version>1.2.1.RELEASE</version>
         </dependency>
 
         <dependency>
-            <groupId>uk.gov.ons.ctp.common</groupId>
-            <artifactId>framework</artifactId>
-            <version>10.49.21</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.8</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>uk.gov.ons.tools</groupId>
-            <artifactId>rabbit</artifactId>
-            <version>1.0.2</version>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.2.0</version>
         </dependency>
-        <!-- ONS END -->
-
-        <!-- Third party libraries -->
 
         <dependency>
             <groupId>ma.glasnost.orika</groupId>
             <artifactId>orika-eclipse-tools</artifactId>
+            <version>${orika.version}</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/ma.glasnost.orika/orika-core -->
+        <dependency>
+            <groupId>ma.glasnost.orika</groupId>
+            <artifactId>orika-core</artifactId>
+            <version>${orika.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+            <version>3.5.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+            <version>9.4.1212.jre7</version>
         </dependency>
 
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
+            <version>4.11</version>
         </dependency>
 
         <dependency>
             <groupId>net.sourceforge.cobertura</groupId>
             <artifactId>cobertura</artifactId>
+            <version>2.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>com.godaddy</groupId>
             <artifactId>logging</artifactId>
+            <version>${godaddylogging.version}</version>
         </dependency>
-        <!-- Third party end -->
 
-        <!-- Testing -->
-
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
         <dependency>
-            <groupId>uk.gov.ons.ctp.common</groupId>
-            <artifactId>test-framework</artifactId>
-            <scope>test</scope>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.9.9</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.9.9</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>4.3.10.RELEASE</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${springboot.version}</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.12.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.10.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>org.objenesis</groupId>-->
+<!--            <artifactId>objenesis</artifactId>-->
+<!--            <version>2.1</version>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
 
     </dependencies>
 
@@ -370,106 +442,106 @@
             </plugin>
 
 
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <id>inbound</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>
-                            <bindingIncludes>
-                                <include>actionFeedback.xjb</include>
-                            </bindingIncludes>
-                            <bindingExcludes>
-                                <include>actionInstruction.xjb</include>
-                            </bindingExcludes>
-                            <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>
-                            <schemaIncludes>
-                                <include>actionFeedback.xsd</include>
-                            </schemaIncludes>
-                            <generateDirectory>${project.build.directory}/generated-sources/xjc/inbound
-                            </generateDirectory>
-                            <args>
-                                <arg>-Xvalue-constructor</arg>
-                                <arg>-Xfluent-builder</arg>
-                                <arg>-generateTools=n</arg>
-                                <arg>-XsimpleEquals</arg>
-                                <arg>-XsimpleHashCode</arg>
-                                <arg>-XtoString</arg>
-                            </args>
-                            <plugins>
-                                <plugin>
-                                    <groupId>net.codesup.util</groupId>
-                                    <artifactId>jaxb2-rich-contract-plugin</artifactId>
-                                    <version>1.18.0</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.jvnet.jaxb2_commons</groupId>
-                                    <artifactId>jaxb2-value-constructor</artifactId>
-                                    <version>3.0</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.jvnet.jaxb2_commons</groupId>
-                                    <artifactId>jaxb2-basics</artifactId>
-                                    <version>1.11.1</version>
-                                </plugin>
-                            </plugins>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <id>outbound</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>
-                            <bindingIncludes>
-                                <include>actionInstruction.xjb</include>
-                            </bindingIncludes>
-                            <bindingExcludes>
-                                <include>actionFeedback.xjb</include>
-                            </bindingExcludes>
-                            <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>
-                            <schemaIncludes>
-                                <include>actionInstruction.xsd</include>
-                            </schemaIncludes>
-                            <generateDirectory>${project.build.directory}/generated-sources/xjc/outbound
-                            </generateDirectory>
-                            <args>
-                                <arg>-Xvalue-constructor</arg>
-                                <arg>-Xfluent-builder</arg>
-                                <arg>-generateTools=n</arg>
-                                <arg>-XsimpleEquals</arg>
-                                <arg>-XsimpleHashCode</arg>
-                                <arg>-XtoString</arg>
-                            </args>
-                            <plugins>
-                                <plugin>
-                                    <groupId>net.codesup.util</groupId>
-                                    <artifactId>jaxb2-rich-contract-plugin</artifactId>
-                                    <version>1.18.0</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.jvnet.jaxb2_commons</groupId>
-                                    <artifactId>jaxb2-value-constructor</artifactId>
-                                    <version>3.0</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.jvnet.jaxb2_commons</groupId>
-                                    <artifactId>jaxb2-basics</artifactId>
-                                    <version>1.11.1</version>
-                                </plugin>
-                            </plugins>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.jvnet.jaxb2.maven2</groupId>-->
+            <!--                <artifactId>maven-jaxb2-plugin</artifactId>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <phase>generate-sources</phase>-->
+            <!--                        <id>inbound</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>generate</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>-->
+            <!--                            <bindingIncludes>-->
+            <!--                                <include>actionFeedback.xjb</include>-->
+            <!--                            </bindingIncludes>-->
+            <!--                            <bindingExcludes>-->
+            <!--                                <include>actionInstruction.xjb</include>-->
+            <!--                            </bindingExcludes>-->
+            <!--                            <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>-->
+            <!--                            <schemaIncludes>-->
+            <!--                                <include>actionFeedback.xsd</include>-->
+            <!--                            </schemaIncludes>-->
+            <!--                            <generateDirectory>${project.build.directory}/generated-sources/xjc/inbound-->
+            <!--                            </generateDirectory>-->
+            <!--                            <args>-->
+            <!--                                <arg>-Xvalue-constructor</arg>-->
+            <!--                                <arg>-Xfluent-builder</arg>-->
+            <!--                                <arg>-generateTools=n</arg>-->
+            <!--                                <arg>-XsimpleEquals</arg>-->
+            <!--                                <arg>-XsimpleHashCode</arg>-->
+            <!--                                <arg>-XtoString</arg>-->
+            <!--                            </args>-->
+            <!--                            <plugins>-->
+            <!--                                <plugin>-->
+            <!--                                    <groupId>net.codesup.util</groupId>-->
+            <!--                                    <artifactId>jaxb2-rich-contract-plugin</artifactId>-->
+            <!--                                    <version>1.18.0</version>-->
+            <!--                                </plugin>-->
+            <!--                                <plugin>-->
+            <!--                                    <groupId>org.jvnet.jaxb2_commons</groupId>-->
+            <!--                                    <artifactId>jaxb2-value-constructor</artifactId>-->
+            <!--                                    <version>3.0</version>-->
+            <!--                                </plugin>-->
+            <!--                                <plugin>-->
+            <!--                                    <groupId>org.jvnet.jaxb2_commons</groupId>-->
+            <!--                                    <artifactId>jaxb2-basics</artifactId>-->
+            <!--                                    <version>1.11.1</version>-->
+            <!--                                </plugin>-->
+            <!--                            </plugins>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <phase>generate-sources</phase>-->
+            <!--                        <id>outbound</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>generate</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <bindingDirectory>src/main/resources/actionsvc/xsd</bindingDirectory>-->
+            <!--                            <bindingIncludes>-->
+            <!--                                <include>actionInstruction.xjb</include>-->
+            <!--                            </bindingIncludes>-->
+            <!--                            <bindingExcludes>-->
+            <!--                                <include>actionFeedback.xjb</include>-->
+            <!--                            </bindingExcludes>-->
+            <!--                            <schemaDirectory>src/main/resources/actionsvc/xsd</schemaDirectory>-->
+            <!--                            <schemaIncludes>-->
+            <!--                                <include>actionInstruction.xsd</include>-->
+            <!--                            </schemaIncludes>-->
+            <!--                            <generateDirectory>${project.build.directory}/generated-sources/xjc/outbound-->
+            <!--                            </generateDirectory>-->
+            <!--                            <args>-->
+            <!--                                <arg>-Xvalue-constructor</arg>-->
+            <!--                                <arg>-Xfluent-builder</arg>-->
+            <!--                                <arg>-generateTools=n</arg>-->
+            <!--                                <arg>-XsimpleEquals</arg>-->
+            <!--                                <arg>-XsimpleHashCode</arg>-->
+            <!--                                <arg>-XtoString</arg>-->
+            <!--                            </args>-->
+            <!--                            <plugins>-->
+            <!--                                <plugin>-->
+            <!--                                    <groupId>net.codesup.util</groupId>-->
+            <!--                                    <artifactId>jaxb2-rich-contract-plugin</artifactId>-->
+            <!--                                    <version>1.18.0</version>-->
+            <!--                                </plugin>-->
+            <!--                                <plugin>-->
+            <!--                                    <groupId>org.jvnet.jaxb2_commons</groupId>-->
+            <!--                                    <artifactId>jaxb2-value-constructor</artifactId>-->
+            <!--                                    <version>3.0</version>-->
+            <!--                                </plugin>-->
+            <!--                                <plugin>-->
+            <!--                                    <groupId>org.jvnet.jaxb2_commons</groupId>-->
+            <!--                                    <artifactId>jaxb2-basics</artifactId>-->
+            <!--                                    <version>1.11.1</version>-->
+            <!--                                </plugin>-->
+            <!--                            </plugins>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
 
         </plugins>
         <resources>

@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import net.sourceforge.cobertura.CoverageIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import uk.gov.ons.ctp.response.action.message.instruction.Priority;
+import uk.gov.ons.ctp.response.action.export.actioninstuction.Priority;
 
 /** Domain model object. */
 @CoverageIgnore
